@@ -8,11 +8,18 @@ declare module "styled-components" {
         fontFamily: string;
         fontSize: string;
       };
+      title: {
+        fontFamily: string;
+      };
     };
     colors: {
       primary: string;
+      logo: string;
       black: string;
       white: string;
+      gray: string;
+      gray2: string;
+      gray3: string;
     };
   }
 }

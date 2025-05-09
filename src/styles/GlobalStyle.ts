@@ -12,6 +12,7 @@ const GlobalStyle = createGlobalStyle`
     text-decoration: none;
     box-sizing: border-box;
     color:#333;
+    font-family: "Pretendard", sans-serif;
     &:visited {
       text-decoration: none;
       color: #333;

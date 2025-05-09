@@ -2,14 +2,21 @@
 export const theme = {
   fonts: {
     logo: {
-      fontFamily: "'BagelFatOne-Regular', sans-serif",
+      fontFamily: "BagelFatOne-Regular",
       fontSize: "30px",
+    },
+    title: {
+      fontFamily: "RixYeoljeongdo_Regular",
     },
   },
   colors: {
     primary: "#689E3E",
+    logo: "#2C5917",
     black: "#333",
     white: "#fff",
+    gray: "#F7F8FA",
+    gray2: "#BFBFBF",
+    gray3: "#A3A3A3",
   },
 } as const;
 
