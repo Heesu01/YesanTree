@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import communityIcon from "../assets/community.png";
+import { useNavigate } from "react-router-dom";
 
 const posts = [
   {
@@ -58,6 +59,12 @@ const popularPosts = [
 ];
 
 const CommunityPage = () => {
+  const navigate = useNavigate();
+
+  const handleWriteClick = () => {
+    navigate("/write");
+  };
+
   return (
     <PageWrapper>
       <TitleArea>
@@ -79,7 +86,9 @@ const CommunityPage = () => {
               <PostDate>{post.date}</PostDate>
             </PostItem>
           ))}
-
+          <WriteSection>
+            <WriteButton onClick={handleWriteClick}>글쓰기</WriteButton>
+          </WriteSection>
           <Pagination>
             &lt; <CurrentPage>1</CurrentPage> 2 3 4 5 &gt;
           </Pagination>
@@ -103,7 +112,8 @@ export default CommunityPage;
 
 const PageWrapper = styled.div`
   padding: 1rem 5%;
-  height: 92vh;
+  height: 10%;
+  margin-bottom: 20px;
 `;
 
 const TitleArea = styled.div`
@@ -178,7 +188,6 @@ const PostDate = styled.span`
 `;
 
 const Pagination = styled.div`
-  margin-top: 1.5rem;
   text-align: center;
   color: #666;
 `;
@@ -186,6 +195,27 @@ const Pagination = styled.div`
 const CurrentPage = styled.span`
   font-weight: bold;
   color: #1e1e1e;
+`;
+
+const WriteSection = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+`;
+const WriteButton = styled.button`
+  margin-top: 1.5rem;
+  background-color: #4e7c3a;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #3d622e;
+  }
 `;
 
 const PopularTitle = styled.h4`
