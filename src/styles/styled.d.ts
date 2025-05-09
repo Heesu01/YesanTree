@@ -1,0 +1,18 @@
+// src/styles/styled.d.ts
+import "styled-components";
+
+declare module "styled-components" {
+  export interface DefaultTheme {
+    fonts: {
+      logo: {
+        fontFamily: string;
+        fontSize: string;
+      };
+    };
+    colors: {
+      primary: string;
+      black: string;
+      white: string;
+    };
+  }
+}
