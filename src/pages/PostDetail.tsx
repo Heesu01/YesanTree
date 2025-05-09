@@ -13,6 +13,14 @@ const PostDetail = () => {
 
   const [upCount, setUpCount] = useState(0);
   const [downCount, setDownCount] = useState(0);
+  const [comment, setComment] = useState("");
+  const [comments, setComments] = useState<string[]>([]);
+
+  const handleAddComment = () => {
+    if (!comment.trim()) return;
+    setComments((prev) => [...prev, comment]);
+    setComment("");
+  };
 
   return (
     <Wrapper>
@@ -35,6 +43,26 @@ const PostDetail = () => {
           <VoteCount>{downCount}</VoteCount>
         </FeedbackGroup>
       </FeedbackBox>
+
+      <CommentSection>
+        <CommentInputWrapper>
+          <CommentTextarea
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="댓글을 입력하세요"
+          />
+          <CommentButton onClick={handleAddComment}>등록</CommentButton>
+        </CommentInputWrapper>
+
+        <CommentList>
+          {comments.map((c, i) => (
+            <CommentItem key={i}>
+              <CommentAuthor>익명</CommentAuthor>
+              <CommentContent>{c}</CommentContent>
+            </CommentItem>
+          ))}
+        </CommentList>
+      </CommentSection>
     </Wrapper>
   );
 };
@@ -45,14 +73,12 @@ const Wrapper = styled.div`
   padding: 5rem 5%;
   max-width: 800px;
   margin: 0 auto;
-  font-family: "Pretendard", sans-serif;
 `;
 
 const Title = styled.h2`
   font-size: 1.75rem;
   font-weight: bold;
   margin-bottom: 0.75rem;
-  line-height: 1.4;
 `;
 
 const MetaInfo = styled.div`
@@ -105,4 +131,66 @@ const VoteCount = styled.div`
   margin-top: 0.5rem;
   font-size: 0.95rem;
   font-weight: 900;
+`;
+
+const CommentSection = styled.div`
+  margin-top: 4rem;
+`;
+
+const CommentInputWrapper = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+`;
+
+const CommentTextarea = styled.textarea`
+  flex: 1;
+  resize: none;
+  padding: 1rem;
+  height: 50px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+
+  &:focus {
+    outline: none;
+    border-color: #4e7c3a;
+  }
+`;
+
+const CommentButton = styled.button`
+  width: 100px;
+  background-color: #4e7c3a;
+  color: white;
+  border: none;
+  font-weight: bold;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #3b602b;
+  }
+`;
+
+const CommentList = styled.ul`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const CommentItem = styled.li`
+  background-color: #f7f7f7;
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+`;
+
+const CommentAuthor = styled.div`
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+`;
+
+const CommentContent = styled.div`
+  font-size: 0.95rem;
+  line-height: 1.6;
 `;
