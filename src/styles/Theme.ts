@@ -5,6 +5,9 @@ export const theme = {
       fontFamily: "BagelFatOne-Regular",
       fontSize: "30px",
     },
+    title: {
+      fontFamily: "RixYeoljeongdo_Regular",
+    },
   },
   colors: {
     primary: "#689E3E",

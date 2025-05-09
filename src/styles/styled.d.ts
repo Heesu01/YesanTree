@@ -8,6 +8,9 @@ declare module "styled-components" {
         fontFamily: string;
         fontSize: string;
       };
+      title: {
+        fontFamily: string;
+      };
     };
     colors: {
       primary: string;
