@@ -10,6 +10,9 @@ export const theme = {
     primary: "#689E3E",
     black: "#333",
     white: "#fff",
+    gray: "#F7F8FA",
+    gray2: "#BFBFBF",
+    gray3: "#A3A3A3",
   },
 } as const;
 

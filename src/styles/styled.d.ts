@@ -13,6 +13,9 @@ declare module "styled-components" {
       primary: string;
       black: string;
       white: string;
+      gray: string;
+      gray2: string;
+      gray3: string;
     };
   }
 }
