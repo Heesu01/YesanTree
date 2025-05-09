@@ -13,8 +13,6 @@ const Layout = () => {
   );
 };
 
-const Main = styled.main`
-  padding-top: 70px;
-`;
+const Main = styled.main``;
 
 export default Layout;

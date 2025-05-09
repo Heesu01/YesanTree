@@ -2,12 +2,13 @@
 export const theme = {
   fonts: {
     logo: {
-      fontFamily: "'BagelFatOne-Regular', sans-serif",
+      fontFamily: "BagelFatOne-Regular",
       fontSize: "30px",
     },
   },
   colors: {
     primary: "#689E3E",
+    logo: "#2C5917",
     black: "#333",
     white: "#fff",
     gray: "#F7F8FA",

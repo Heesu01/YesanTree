@@ -11,6 +11,7 @@ declare module "styled-components" {
     };
     colors: {
       primary: string;
+      logo: string;
       black: string;
       white: string;
       gray: string;
