@@ -77,7 +77,7 @@ const Nav = styled.nav`
 `;
 
 const StyledLink = styled(Link)<{ $active: boolean }>`
-  font-size: 15px;
+  font-size: 16px;
   width: 12vw;
   text-align: center;
   color: ${({ theme }) => theme.colors.black};

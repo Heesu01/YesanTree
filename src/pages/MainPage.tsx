@@ -281,7 +281,7 @@ const LoginBgc = styled.div`
 `;
 
 const LoginSection = styled.section<{ $visible: boolean }>`
-  padding: 5rem 0;
+  padding: 5rem 0 10rem 0;
   text-align: center;
   opacity: 0;
   transform: translateY(50px);
