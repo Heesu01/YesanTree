@@ -3,6 +3,7 @@ import { ThemeProvider } from "styled-components";
 import GlobalStyle from "./styles/GlobalStyle";
 import { theme } from "./styles/Theme";
 
+import ScrollToTop from "./components/ScrollToTop";
 import Layout from "./components/Layout";
 import MainPage from "./pages/MainPage";
 import BudgetPage from "./pages/Budget";
@@ -13,6 +14,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <GlobalStyle />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<MainPage />} />
