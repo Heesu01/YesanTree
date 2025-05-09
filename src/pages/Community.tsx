@@ -81,7 +81,10 @@ const CommunityPage = () => {
           </SortBox>
 
           {posts.map((post) => (
-            <PostItem key={post.id}>
+            <PostItem
+              key={post.id}
+              onClick={() => navigate(`/community/${post.id}`)}
+            >
               <PostTitle>{post.title}</PostTitle>
               <PostDate>{post.date}</PostDate>
             </PostItem>
@@ -174,6 +177,11 @@ const SortDivider = styled.span`
 const PostItem = styled.div`
   border-bottom: 1px solid #e5e5e5;
   padding: 1rem 0;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f8f8f8;
+  }
 `;
 
 const PostTitle = styled.h4`
