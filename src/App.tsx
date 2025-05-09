@@ -8,6 +8,8 @@ import Layout from "./components/Layout";
 import MainPage from "./pages/MainPage";
 import BudgetPage from "./pages/Budget";
 import CommunityPage from "./pages/Community";
+import WritePage from "./pages/Write";
+import PostDetailPage from "./pages/PostDetail";
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
             <Route path="/" element={<MainPage />} />
             <Route path="/budget" element={<BudgetPage />} />
             <Route path="/community" element={<CommunityPage />} />
+            <Route path="/write" element={<WritePage />} />
+            <Route path="/community/:id" element={<PostDetailPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
