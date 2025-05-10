@@ -1,8 +1,10 @@
 import styled from "styled-components";
 import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
+import { FaUserCircle } from "react-icons/fa";
+import { getUserInfo, logout } from "../api/UserApi";
 
 import logoImg from "../assets/logo.png";
 
@@ -11,9 +13,39 @@ const Header = () => {
   const navigate = useNavigate();
   const currentPath = location.pathname;
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const toggleMenu = () => {
     setMenuOpen((prev) => !prev);
+  };
+
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    if (isLoggedIn === "true") {
+      const fetchUser = async () => {
+        try {
+          const res = await getUserInfo();
+          setUserName(res.name);
+        } catch (err) {
+          console.error("사용자 정보 조회 실패", err);
+        }
+      };
+      fetchUser();
+    }
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      localStorage.removeItem("isLoggedIn");
+      setUserName(null);
+      setShowDropdown(false);
+      navigate("/");
+    } catch (err) {
+      console.error("로그아웃 실패", err);
+      alert("로그아웃 중 문제가 발생했습니다.");
+    }
   };
 
   return (
@@ -51,10 +83,28 @@ const Header = () => {
           </StyledLink>
         </Nav>
         <Btns>
-          <LoginButton onClick={() => navigate("/login")}>로그인</LoginButton>
-          <LoginButton onClick={() => navigate("/signup")}>
-            회원가입
-          </LoginButton>
+          {userName ? (
+            <ProfileWrapper>
+              <ProfileButton onClick={() => setShowDropdown(!showDropdown)}>
+                <FaUserCircle size={20} />
+                <span>{userName} 님</span>
+              </ProfileButton>
+              {showDropdown && (
+                <Dropdown>
+                  <DropdownItem onClick={handleLogout}>로그아웃</DropdownItem>
+                </Dropdown>
+              )}
+            </ProfileWrapper>
+          ) : (
+            <>
+              <LoginButton onClick={() => navigate("/login")}>
+                로그인
+              </LoginButton>
+              <LoginButton onClick={() => navigate("/signup")}>
+                회원가입
+              </LoginButton>
+            </>
+          )}
         </Btns>
       </RightArea>
     </HeaderWrapper>
@@ -178,5 +228,47 @@ const LoginButton = styled.button`
   &:hover {
     background-color: ${({ theme }) => theme.colors.gray};
     color: ${({ theme }) => theme.colors.black};
+  }
+`;
+
+const ProfileWrapper = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 13px;
+`;
+
+const ProfileButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  background: none;
+  cursor: pointer;
+`;
+
+const Dropdown = styled.div`
+  position: absolute;
+  top: 200%;
+  width: 100px;
+  right: -10%;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 4px;
+  overflow: hidden;
+  z-index: 999;
+`;
+
+const DropdownItem = styled.button`
+  padding: 10px 16px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.gray};
   }
 `;

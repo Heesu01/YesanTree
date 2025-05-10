@@ -1,13 +1,72 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
+import { signup } from "../api/UserApi";
 import logoImg from "../assets/logo.png";
 
-const SignupPage = () => {
+const Signup = () => {
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const passwordRegex =
+    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=])[A-Za-z\d!@#$%^&*()_\-+=]{8,20}$/;
+
+  const validateFields = () => {
+    let valid = true;
+
+    if (!emailRegex.test(email)) {
+      setEmailError("이메일 형식이 올바르지 않습니다.");
+      valid = false;
+    } else {
+      setEmailError("");
+    }
+
+    if (!passwordRegex.test(password)) {
+      setPasswordError(
+        "비밀번호는 영문, 숫자, 특수문자 포함 8~20자 이내여야 합니다."
+      );
+      valid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    if (password !== confirmPassword) {
+      setConfirmPasswordError("비밀번호가 일치하지 않습니다.");
+      valid = false;
+    } else {
+      setConfirmPasswordError("");
+    }
+
+    return valid;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert("회원가입 완료");
+    const isValid = validateFields();
+    if (!isValid) return;
+
+    try {
+      await signup({ email, password, name });
+      localStorage.setItem("isLoggedIn", "true");
+      alert("회원가입이 완료되었습니다.");
+      navigate("/");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        alert(err.response?.data?.message || "회원가입에 실패했습니다.");
+      } else {
+        alert("예상치 못한 에러가 발생했습니다.");
+      }
+    }
   };
 
   return (
@@ -16,10 +75,66 @@ const SignupPage = () => {
       <SignupBox>
         <Title>회원가입</Title>
         <Form onSubmit={handleSubmit}>
-          <Input type="text" placeholder="아이디" required />
-          <Input type="email" placeholder="이메일" required />
-          <Input type="password" placeholder="비밀번호" required />
-          <Input type="password" placeholder="비밀번호 확인" required />
+          <Input
+            type="text"
+            placeholder="이메일 아이디"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (!emailRegex.test(e.target.value)) {
+                setEmailError("이메일 형식이 올바르지 않습니다.");
+              } else {
+                setEmailError("");
+              }
+            }}
+            required
+          />
+          {emailError && <ErrorText>{emailError}</ErrorText>}
+
+          <Input
+            type="text"
+            placeholder="닉네임"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+
+          <Input
+            type="password"
+            placeholder="비밀번호"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (!passwordRegex.test(e.target.value)) {
+                setPasswordError(
+                  "비밀번호는 영문, 숫자, 특수문자 포함 8~20자 이내여야 합니다."
+                );
+              } else {
+                setPasswordError("");
+              }
+            }}
+            required
+          />
+          {passwordError && <ErrorText>{passwordError}</ErrorText>}
+
+          <Input
+            type="password"
+            placeholder="비밀번호 확인"
+            value={confirmPassword}
+            onChange={(e) => {
+              setConfirmPassword(e.target.value);
+              if (password !== e.target.value) {
+                setConfirmPasswordError("비밀번호가 일치하지 않습니다.");
+              } else {
+                setConfirmPasswordError("");
+              }
+            }}
+            required
+          />
+          {confirmPasswordError && (
+            <ErrorText>{confirmPasswordError}</ErrorText>
+          )}
+
           <SubmitButton type="submit">가입하기</SubmitButton>
           <LoginLink onClick={() => navigate("/login")}>
             이미 계정이 있으신가요? 로그인하기
@@ -30,7 +145,7 @@ const SignupPage = () => {
   );
 };
 
-export default SignupPage;
+export default Signup;
 
 const Wrapper = styled.div`
   min-height: 100vh;
@@ -118,4 +233,11 @@ const LoginLink = styled.div`
   &:hover {
     text-decoration: underline;
   }
+`;
+
+const ErrorText = styled.p`
+  font-size: 0.7rem;
+  color: red;
+  margin-left: 10px;
+  margin-top: -5px;
 `;

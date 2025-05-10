@@ -5,6 +5,8 @@ import mobileHomeImg from "../assets/mobile-home.png";
 import treeIcon from "../assets/tree.png";
 import { IoIosArrowDown } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { login } from "../api/UserApi";
 
 const MainPage = () => {
   const navigate = useNavigate();
@@ -12,6 +14,9 @@ const MainPage = () => {
   const aboutRef = useRef(null);
   const [showLogin, setShowLogin] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -37,6 +42,20 @@ const MainPage = () => {
     return () => observer.disconnect();
   }, []);
 
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await login({ email, password });
+      localStorage.setItem("isLoggedIn", "true");
+      navigate("/");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        alert(err.response?.data?.message || "로그인에 실패했습니다.");
+      } else {
+        alert("예상치 못한 에러가 발생했습니다.");
+      }
+    }
+  };
   return (
     <Wrapper>
       <HeroSection>
@@ -97,10 +116,22 @@ const MainPage = () => {
       <LoginBgc>
         <LoginSection ref={loginRef} $visible={showLogin}>
           <LoginTitle>로그인</LoginTitle>
-          <LoginForm>
-            <Input type="text" placeholder="아이디" />
-            <Input type="password" placeholder="비밀번호" />
-            <SubmitButton>로그인</SubmitButton>
+          <LoginForm onSubmit={handleLogin}>
+            <Input
+              type="text"
+              placeholder="아이디"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <Input
+              type="password"
+              placeholder="비밀번호"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <SubmitButton type="submit">로그인</SubmitButton>
             <SignupLink onClick={() => navigate("/signup")}>
               <span>계정이 없으신가요?</span>
               <p>회원가입하러 가기</p>
