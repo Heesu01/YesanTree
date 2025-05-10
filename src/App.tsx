@@ -6,7 +6,8 @@ import { theme } from "./styles/Theme";
 import ScrollToTop from "./components/ScrollToTop";
 import Layout from "./components/Layout";
 import MainPage from "./pages/MainPage";
-import BudgetPage from "./pages/Budget";
+import AdminBudgetPage from "./pages/AdminBudget";
+import CitizenBudgetPage from "./pages/CitizenBudget";
 import CommunityPage from "./pages/Community";
 import WritePage from "./pages/Write";
 import PostDetailPage from "./pages/PostDetail";
@@ -20,7 +21,8 @@ function App() {
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<MainPage />} />
-            <Route path="/budget" element={<BudgetPage />} />
+            <Route path="/budget/admin" element={<AdminBudgetPage />} />
+            <Route path="/budget/citizen" element={<CitizenBudgetPage />} />
             <Route path="/community" element={<CommunityPage />} />
             <Route path="/write" element={<WritePage />} />
             <Route path="/community/:id" element={<PostDetailPage />} />

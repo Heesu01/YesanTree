@@ -24,10 +24,16 @@ const Header = () => {
           <StyledLink to="/" $active={currentPath === "/"}>
             홈
           </StyledLink>
-          <StyledLink to="/budget" $active={currentPath === "/budget"}>
+          <StyledLink
+            to="/budget/admin"
+            $active={currentPath.startsWith("/budget")}
+          >
             예산현황
           </StyledLink>
-          <StyledLink to="/community" $active={currentPath === "/community"}>
+          <StyledLink
+            to="/community"
+            $active={currentPath.startsWith("/community")}
+          >
             커뮤니티
           </StyledLink>
         </Nav>
