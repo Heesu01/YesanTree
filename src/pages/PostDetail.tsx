@@ -146,11 +146,13 @@ const CommentInputWrapper = styled.div`
 const CommentTextarea = styled.textarea`
   flex: 1;
   resize: none;
-  padding: 1rem;
-  height: 50px;
+  padding: 0 1rem;
   font-size: 1rem;
+  height: 40px;
+  line-height: 40px;
   border: 1px solid #ccc;
   border-radius: 10px;
+  overflow: hidden;
 
   &:focus {
     outline: none;
@@ -160,6 +162,7 @@ const CommentTextarea = styled.textarea`
 
 const CommentButton = styled.button`
   width: 100px;
+  height: 40px;
   background-color: #4e7c3a;
   color: white;
   border: none;

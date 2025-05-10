@@ -53,7 +53,7 @@ const MainPage = () => {
         <AboutInner>
           <SectionTitle>예산트리는 무엇인가요?</SectionTitle>
           <AboutGrid ref={aboutRef} $visible={showAbout}>
-            <AboutCard>
+            <AboutCard onClick={() => navigate("/budget/admin")}>
               <CardHeader>
                 <img src={treeIcon} alt="트리 아이콘" />
                 <h3>예산 시각화</h3>
@@ -62,7 +62,7 @@ const MainPage = () => {
                 복잡한 예산 데이터를 누구나 쉽게 이해할 수 있게 시각화합니다.
               </p>
             </AboutCard>
-            <AboutCard>
+            <AboutCard onClick={() => navigate("/community")}>
               <CardHeader>
                 <img src={treeIcon} alt="트리 아이콘" />
                 <h3>시민 참여</h3>
@@ -72,7 +72,7 @@ const MainPage = () => {
                 제공합니다.
               </p>
             </AboutCard>
-            <AboutCard>
+            <AboutCard onClick={() => navigate("/budget/admin")}>
               <CardHeader>
                 <img src={treeIcon} alt="트리 아이콘" />
                 <h3>공공 데이터</h3>
@@ -238,8 +238,9 @@ const AboutCard = styled.div`
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease;
-  background: linear-gradient(to right, #c5e9a7, #caefad);
+  background: linear-gradient(to right, #d3f0bc, #b2e988);
   margin-bottom: 20px;
+  cursor: pointer;
 
   h3 {
     font-size: 1.3rem;
@@ -276,9 +277,9 @@ const CardHeader = styled.div`
     font-size: 1.3rem;
     color: #2f6633;
     margin: 0;
-    font-weight: bold;
     margin-left: -20px;
     margin-top: 15px;
+    font-family: ${({ theme }) => theme.fonts.title.fontFamily};
   }
 `;
 
