@@ -92,9 +92,14 @@ const CommunityPage = () => {
           <WriteSection>
             <WriteButton onClick={handleWriteClick}>글쓰기</WriteButton>
           </WriteSection>
-          <Pagination>
-            &lt; <CurrentPage>1</CurrentPage> 2 3 4 5 &gt;
-          </Pagination>
+
+          <PaginationWrapper>
+            <PageButton>&lt;</PageButton>
+            <PageNumber className="active">1</PageNumber>
+            <PageNumber>2</PageNumber>
+            <PageNumber>3</PageNumber>
+            <PageButton>&gt;</PageButton>
+          </PaginationWrapper>
         </LeftSection>
 
         <RightSection>
@@ -125,6 +130,11 @@ const TitleArea = styled.div`
   border-bottom: 5px solid #4e7c3a;
   width: 300px;
   height: 120px;
+
+  @media (max-width: 768px) {
+    width: 230px;
+    margin-bottom: 20px;
+  }
 `;
 
 const Icon = styled.img`
@@ -153,6 +163,10 @@ const LeftSection = styled.div`
 const RightSection = styled.aside`
   flex: 1;
   padding-left: 2rem;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const SortBox = styled.div`
@@ -162,6 +176,10 @@ const SortBox = styled.div`
   display: flex;
   width: 100%;
   justify-content: flex-end;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const SortOption = styled.span<{ active?: boolean }>`
@@ -195,14 +213,38 @@ const PostDate = styled.span`
   color: #aaa;
 `;
 
-const Pagination = styled.div`
-  text-align: center;
-  color: #666;
+const PaginationWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
 `;
 
-const CurrentPage = styled.span`
+const PageButton = styled.button`
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #888;
+
+  &:hover {
+    color: #000;
+  }
+`;
+
+const PageNumber = styled.button`
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: #f4f4f4;
+  cursor: pointer;
   font-weight: bold;
-  color: #1e1e1e;
+  color: #444;
+
+  &.active {
+    background-color: #6dad5b;
+    color: white;
+  }
 `;
 
 const WriteSection = styled.div`
@@ -211,6 +253,7 @@ const WriteSection = styled.div`
   align-items: center;
   justify-content: flex-end;
 `;
+
 const WriteButton = styled.button`
   margin-top: 1.5rem;
   background-color: #4e7c3a;

@@ -1,10 +1,13 @@
 import styled, { keyframes } from "styled-components";
 import { useEffect, useRef, useState } from "react";
 import home from "../assets/home.png";
+import mobileHomeImg from "../assets/mobile-home.png";
 import treeIcon from "../assets/tree.png";
 import { IoIosArrowDown } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 const MainPage = () => {
+  const navigate = useNavigate();
   const loginRef = useRef(null);
   const aboutRef = useRef(null);
   const [showLogin, setShowLogin] = useState(false);
@@ -37,7 +40,10 @@ const MainPage = () => {
   return (
     <Wrapper>
       <HeroSection>
-        <HeroImage src={home} alt="메인 이미지" />
+        <picture>
+          <source media="(max-width: 768px)" srcSet={mobileHomeImg} />
+          <HeroImage src={home} alt="메인 이미지" />
+        </picture>
         <HeroText>
           내 손으로 만든 서울, <br />내 눈으로 본 예산
         </HeroText>
@@ -51,7 +57,7 @@ const MainPage = () => {
         <AboutInner>
           <SectionTitle>예산트리는 무엇인가요?</SectionTitle>
           <AboutGrid ref={aboutRef} $visible={showAbout}>
-            <AboutCard>
+            <AboutCard onClick={() => navigate("/budget/admin")}>
               <CardHeader>
                 <img src={treeIcon} alt="트리 아이콘" />
                 <h3>예산 시각화</h3>
@@ -60,7 +66,7 @@ const MainPage = () => {
                 복잡한 예산 데이터를 누구나 쉽게 이해할 수 있게 시각화합니다.
               </p>
             </AboutCard>
-            <AboutCard>
+            <AboutCard onClick={() => navigate("/community")}>
               <CardHeader>
                 <img src={treeIcon} alt="트리 아이콘" />
                 <h3>시민 참여</h3>
@@ -70,7 +76,7 @@ const MainPage = () => {
                 제공합니다.
               </p>
             </AboutCard>
-            <AboutCard>
+            <AboutCard onClick={() => navigate("/budget/admin")}>
               <CardHeader>
                 <img src={treeIcon} alt="트리 아이콘" />
                 <h3>공공 데이터</h3>
@@ -95,6 +101,10 @@ const MainPage = () => {
             <Input type="text" placeholder="아이디" />
             <Input type="password" placeholder="비밀번호" />
             <SubmitButton>로그인</SubmitButton>
+            <SignupLink onClick={() => navigate("/signup")}>
+              <span>계정이 없으신가요?</span>
+              <p>회원가입하러 가기</p>
+            </SignupLink>
           </LoginForm>
         </LoginSection>
       </LoginBgc>
@@ -124,7 +134,7 @@ const HeroImage = styled.img`
   position: absolute;
   top: 0;
   left: 0;
-  opacity: 0.2;
+  opacity: 0.6;
 `;
 
 const fadeSlideUp = keyframes`
@@ -149,6 +159,25 @@ const HeroText = styled.h1`
   text-align: end;
   line-height: 1.5em;
   animation: ${fadeSlideUp} 1.2s ease-out;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    font-size: 1.9rem;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    animation: fadeIn 1.5s ease-in;
+  }
 `;
 
 const ScrollIndicator = styled.div`
@@ -161,6 +190,9 @@ const ScrollIndicator = styled.div`
     font-weight: bold;
     font-size: 1.4em;
     margin-bottom: 10px;
+    @media (max-width: 768px) {
+      font-size: 1.2rem;
+    }
   }
 
   svg {
@@ -209,6 +241,10 @@ const SectionTitle = styled.h2`
   margin-bottom: 3rem;
   color: ${({ theme }) => theme.colors.black};
   font-family: ${({ theme }) => theme.fonts.title.fontFamily};
+
+  @media (max-width: 768px) {
+    font-size: 1.7rem;
+  }
 `;
 
 const AboutGrid = styled.div<{ $visible: boolean }>`
@@ -232,8 +268,9 @@ const AboutCard = styled.div`
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease;
-  background: linear-gradient(to right, #c5e9a7, #caefad);
+  background: linear-gradient(to right, #d3f0bc, #b2e988);
   margin-bottom: 20px;
+  cursor: pointer;
 
   h3 {
     font-size: 1.3rem;
@@ -270,9 +307,9 @@ const CardHeader = styled.div`
     font-size: 1.3rem;
     color: #2f6633;
     margin: 0;
-    font-weight: bold;
     margin-left: -20px;
     margin-top: 15px;
+    font-family: ${({ theme }) => theme.fonts.title.fontFamily};
   }
 `;
 
@@ -292,6 +329,10 @@ const LoginSection = styled.section<{ $visible: boolean }>`
     `opacity: 1;
     transform: translateY(0);
   `}
+
+  @media (max-width: 768px) {
+    padding: 5rem 2rem;
+  }
 `;
 
 const LoginTitle = styled.h2`
@@ -331,5 +372,26 @@ const SubmitButton = styled.button`
 
   &:hover {
     background-color: #388e3c;
+  }
+`;
+
+const SignupLink = styled.div`
+  margin-top: 2px;
+  padding: 0 4px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  p {
+    color: #4caf50;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  span {
+    color: gray;
+  }
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
   }
 `;

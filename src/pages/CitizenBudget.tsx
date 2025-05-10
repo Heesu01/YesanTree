@@ -85,7 +85,9 @@ const CitizenBudget = () => {
         <TitleRow>
           <TitleCell>사업명</TitleCell>
           <TitleCell>예산편성사업비</TitleCell>
-          <TitleCell>년도</TitleCell>
+          <TitleCell as={Cell} hideOnMobile>
+            년도
+          </TitleCell>
           <TitleCell>사업위치</TitleCell>
         </TitleRow>
 
@@ -94,7 +96,9 @@ const CitizenBudget = () => {
             <BudgetItem key={index}>
               <Cell>{item.title}</Cell>
               <Cell>₩ {item.amount.toLocaleString()}</Cell>
-              <Cell>{item.year}</Cell>
+              <Cell hideOnMobile>
+                <span>{item.year}</span>
+              </Cell>
               <Cell>{item.location}</Cell>
             </BudgetItem>
           ))}
@@ -119,6 +123,10 @@ const Wrapper = styled.div``;
 const ContentSection = styled.section`
   padding: 24px 80px;
   background: #fff;
+
+  @media (max-width: 768px) {
+    padding: 24px 20px;
+  }
 `;
 
 const TitleRow = styled.div`
@@ -126,6 +134,10 @@ const TitleRow = styled.div`
   font-weight: bold;
   padding: 16px 0;
   border-bottom: 2px solid #ccc;
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
 `;
 
 const TitleCell = styled.div`
@@ -136,6 +148,10 @@ const TitleCell = styled.div`
 const BudgetList = styled.div`
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
 `;
 
 const BudgetItem = styled.div`
@@ -144,9 +160,17 @@ const BudgetItem = styled.div`
   border-bottom: 1px solid #eee;
 `;
 
-const Cell = styled.div`
+const Cell = styled.div<{ hideOnMobile?: boolean }>`
   flex: 1;
   text-align: left;
+
+  ${({ hideOnMobile }) =>
+    hideOnMobile &&
+    `
+    @media (max-width: 768px) {
+      display: none;
+    }
+  `}
 `;
 
 const PaginationWrapper = styled.div`

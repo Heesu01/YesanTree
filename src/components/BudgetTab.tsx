@@ -87,6 +87,10 @@ const SearchBarWrapper = styled.div`
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   z-index: 1;
+
+  @media (max-width: 768px) {
+    width: 90%;
+  }
 `;
 
 const SearchInput = styled.input`
@@ -111,9 +115,13 @@ const SearchButton = styled.button`
 const TabWrapper = styled.div`
   display: flex;
   justify-content: center;
-  gap: 200px;
+  gap: 12rem;
   margin-top: 40px;
   z-index: 1;
+
+  @media (max-width: 768px) {
+    gap: 3rem;
+  }
 `;
 
 const Tab = styled.div`

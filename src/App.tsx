@@ -6,11 +6,14 @@ import { theme } from "./styles/Theme";
 import ScrollToTop from "./components/ScrollToTop";
 import Layout from "./components/Layout";
 import MainPage from "./pages/MainPage";
-import AdminBudgetPage from "./pages/AdminBudget";
-import CitizenBudgetPage from "./pages/CitizenBudget";
-import CommunityPage from "./pages/Community";
-import WritePage from "./pages/Write";
-import PostDetailPage from "./pages/PostDetail";
+import AdminBudget from "./pages/AdminBudget";
+import CitizenBudget from "./pages/CitizenBudget";
+import Community from "./pages/Community";
+import Write from "./pages/Write";
+import PostDetail from "./pages/PostDetail";
+import NotFoundPage from "./pages/NotFoundPage";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 
 function App() {
   return (
@@ -21,12 +24,15 @@ function App() {
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<MainPage />} />
-            <Route path="/budget/admin" element={<AdminBudgetPage />} />
-            <Route path="/budget/citizen" element={<CitizenBudgetPage />} />
-            <Route path="/community" element={<CommunityPage />} />
-            <Route path="/write" element={<WritePage />} />
-            <Route path="/community/:id" element={<PostDetailPage />} />
+            <Route path="/budget/admin" element={<AdminBudget />} />
+            <Route path="/budget/citizen" element={<CitizenBudget />} />
+            <Route path="/community" element={<Community />} />
+            <Route path="/write" element={<Write />} />
+            <Route path="/community/:id" element={<PostDetail />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
