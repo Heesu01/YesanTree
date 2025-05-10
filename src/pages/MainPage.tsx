@@ -1,6 +1,7 @@
 import styled, { keyframes } from "styled-components";
 import { useEffect, useRef, useState } from "react";
 import home from "../assets/home.png";
+import mobileHomeImg from "../assets/mobile-home.png";
 import treeIcon from "../assets/tree.png";
 import { IoIosArrowDown } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
@@ -39,7 +40,10 @@ const MainPage = () => {
   return (
     <Wrapper>
       <HeroSection>
-        <HeroImage src={home} alt="메인 이미지" />
+        <picture>
+          <source media="(max-width: 768px)" srcSet={mobileHomeImg} />
+          <HeroImage src={home} alt="메인 이미지" />
+        </picture>
         <HeroText>
           내 손으로 만든 서울, <br />내 눈으로 본 예산
         </HeroText>
@@ -155,6 +159,25 @@ const HeroText = styled.h1`
   text-align: end;
   line-height: 1.5em;
   animation: ${fadeSlideUp} 1.2s ease-out;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    font-size: 1.9rem;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    animation: fadeIn 1.5s ease-in;
+  }
 `;
 
 const ScrollIndicator = styled.div`
@@ -167,6 +190,9 @@ const ScrollIndicator = styled.div`
     font-weight: bold;
     font-size: 1.4em;
     margin-bottom: 10px;
+    @media (max-width: 768px) {
+      font-size: 1.2rem;
+    }
   }
 
   svg {
@@ -215,6 +241,10 @@ const SectionTitle = styled.h2`
   margin-bottom: 3rem;
   color: ${({ theme }) => theme.colors.black};
   font-family: ${({ theme }) => theme.fonts.title.fontFamily};
+
+  @media (max-width: 768px) {
+    font-size: 1.7rem;
+  }
 `;
 
 const AboutGrid = styled.div<{ $visible: boolean }>`
@@ -299,6 +329,10 @@ const LoginSection = styled.section<{ $visible: boolean }>`
     `opacity: 1;
     transform: translateY(0);
   `}
+
+  @media (max-width: 768px) {
+    padding: 5rem 2rem;
+  }
 `;
 
 const LoginTitle = styled.h2`
@@ -356,5 +390,8 @@ const SignupLink = styled.div`
   }
   span {
     color: gray;
+  }
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
   }
 `;

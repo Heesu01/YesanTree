@@ -39,12 +39,20 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
+
+  @media (max-width: 768px) {
+    background: #fff;
+  }
 `;
 
 const Logo = styled.img`
   width: 300px;
   margin-right: 60px;
   cursor: pointer;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const SignupBox = styled.div`
@@ -54,6 +62,10 @@ const SignupBox = styled.div`
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
+
+  @media (max-width: 768px) {
+    box-shadow: none;
+  }
 `;
 
 const Title = styled.h2`

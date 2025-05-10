@@ -130,6 +130,11 @@ const TitleArea = styled.div`
   border-bottom: 5px solid #4e7c3a;
   width: 300px;
   height: 120px;
+
+  @media (max-width: 768px) {
+    width: 230px;
+    margin-bottom: 20px;
+  }
 `;
 
 const Icon = styled.img`
@@ -158,6 +163,10 @@ const LeftSection = styled.div`
 const RightSection = styled.aside`
   flex: 1;
   padding-left: 2rem;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const SortBox = styled.div`
@@ -167,6 +176,10 @@ const SortBox = styled.div`
   display: flex;
   width: 100%;
   justify-content: flex-end;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const SortOption = styled.span<{ active?: boolean }>`

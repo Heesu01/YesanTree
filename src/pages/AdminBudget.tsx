@@ -127,6 +127,10 @@ const Wrapper = styled.div``;
 const ContentSection = styled.section`
   padding: 24px 80px;
   background: #fff;
+
+  @media (max-width: 768px) {
+    padding: 24px 20px;
+  }
 `;
 
 const CategoryFilter = styled.div`
@@ -208,6 +212,10 @@ const LeftSection = styled.div`
 const RightSection = styled.div`
   flex: 1.5;
   margin-top: 60px;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const BudgetList = styled.div`
@@ -230,16 +238,28 @@ const Tag = styled.span<{ color: string }>`
   border-radius: 6px;
   font-size: 14px;
   font-weight: bold;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
 `;
 
 const Title = styled.span`
   flex: 1;
   margin: 0 20px;
   font-weight: 500;
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
 `;
 
 const Amount = styled.span`
   font-family: ${({ theme }) => theme.fonts.num.fontFamily};
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
 `;
 
 const PaginationWrapper = styled.div`
