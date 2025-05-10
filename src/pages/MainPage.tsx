@@ -3,8 +3,10 @@ import { useEffect, useRef, useState } from "react";
 import home from "../assets/home.png";
 import treeIcon from "../assets/tree.png";
 import { IoIosArrowDown } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 const MainPage = () => {
+  const navigate = useNavigate();
   const loginRef = useRef(null);
   const aboutRef = useRef(null);
   const [showLogin, setShowLogin] = useState(false);
@@ -95,6 +97,10 @@ const MainPage = () => {
             <Input type="text" placeholder="아이디" />
             <Input type="password" placeholder="비밀번호" />
             <SubmitButton>로그인</SubmitButton>
+            <SignupLink onClick={() => navigate("/signup")}>
+              <span>계정이 없으신가요?</span>
+              <p>회원가입하러 가기</p>
+            </SignupLink>
           </LoginForm>
         </LoginSection>
       </LoginBgc>
@@ -124,7 +130,7 @@ const HeroImage = styled.img`
   position: absolute;
   top: 0;
   left: 0;
-  opacity: 0.2;
+  opacity: 0.6;
 `;
 
 const fadeSlideUp = keyframes`
@@ -331,5 +337,23 @@ const SubmitButton = styled.button`
 
   &:hover {
     background-color: #388e3c;
+  }
+`;
+
+const SignupLink = styled.div`
+  margin-top: 2px;
+  padding: 0 4px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  p {
+    color: #4caf50;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  span {
+    color: gray;
   }
 `;

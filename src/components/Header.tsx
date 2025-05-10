@@ -9,14 +9,10 @@ const Header = () => {
   const navigate = useNavigate();
   const currentPath = location.pathname;
 
-  const handleLogoClick = () => {
-    navigate("/");
-  };
-
   return (
     <HeaderWrapper>
       <LeftArea>
-        <Logo onClick={handleLogoClick} src={logoImg} alt="예산트리 로고" />
+        <Logo onClick={() => navigate("/")} src={logoImg} alt="예산트리 로고" />
       </LeftArea>
 
       <RightArea>
@@ -37,7 +33,12 @@ const Header = () => {
             커뮤니티
           </StyledLink>
         </Nav>
-        <LoginButton>로그인</LoginButton>
+        <Btns>
+          <LoginButton onClick={() => navigate("/login")}>로그인</LoginButton>
+          <LoginButton onClick={() => navigate("/signup")}>
+            회원가입
+          </LoginButton>
+        </Btns>
       </RightArea>
     </HeaderWrapper>
   );
@@ -95,6 +96,11 @@ const StyledLink = styled(Link)<{ $active: boolean }>`
   &:hover {
     border-bottom: 2px solid ${({ theme }) => theme.colors.gray2};
   }
+`;
+
+const Btns = styled.div`
+  display: flex;
+  gap: 10px;
 `;
 
 const LoginButton = styled.button`
