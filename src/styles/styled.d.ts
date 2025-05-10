@@ -11,6 +11,9 @@ declare module "styled-components" {
       title: {
         fontFamily: string;
       };
+      num: {
+        fontFamily: string;
+      };
     };
     colors: {
       primary: string;

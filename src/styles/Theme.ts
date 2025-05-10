@@ -8,6 +8,9 @@ export const theme = {
     title: {
       fontFamily: "RixYeoljeongdo_Regular",
     },
+    num: {
+      fontFamily: "S-CoreDream-3Light",
+    },
   },
   colors: {
     primary: "#689E3E",
