@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { FiInfo } from "react-icons/fi";
 import BudgetTab from "../components/BudgetTab";
 import BudgetChart from "../components/BudgetChart";
+import PieChartBox from "../components/PieChartBox";
 import { fetchSimpleBudget } from "../api/BudgetApi";
 
 interface SimpleBudgetItem {
@@ -149,6 +150,7 @@ const AdminBudget = () => {
 
           <RightSection>
             <BudgetChart />
+            <PieChartBox />
           </RightSection>
         </MainContent>
       </ContentSection>
@@ -248,6 +250,9 @@ const LeftSection = styled.div`
 const RightSection = styled.div`
   flex: 1.5;
   margin-top: 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 
   @media (max-width: 768px) {
     display: none;
