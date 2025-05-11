@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { FaRegThumbsUp, FaRegThumbsDown } from "react-icons/fa";
+import { FaRegThumbsUp, FaRegThumbsDown, FaTrashAlt } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -9,8 +9,12 @@ import {
   dislikePost,
   undislikePost,
   deletePost,
+  fetchComments,
+  createComment,
+  deleteComment,
 } from "../api/CommunityApi";
-import type { BoardDetail } from "../api/CommunityApi";
+import { getUserInfo } from "../api/UserApi";
+import type { BoardDetail, Comment } from "../api/CommunityApi";
 
 const PostDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -21,8 +25,9 @@ const PostDetail = () => {
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
   const [comment, setComment] = useState("");
-  const [comments, setComments] = useState<string[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [showMenu, setShowMenu] = useState(false);
+  const [myName, setMyName] = useState("");
 
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
 
@@ -41,7 +46,28 @@ const PostDetail = () => {
         setLoading(false);
       }
     };
+
+    const loadComments = async () => {
+      try {
+        const data = await fetchComments(id!);
+        setComments(data);
+      } catch (err) {
+        console.error("댓글 조회 실패:", err);
+      }
+    };
+
+    const loadUser = async () => {
+      try {
+        const user = await getUserInfo();
+        setMyName(user.name);
+      } catch (err) {
+        console.error("유저 정보 조회 실패:", err);
+      }
+    };
+
     loadPost();
+    loadComments();
+    if (isLoggedIn) loadUser();
   }, [id]);
 
   const handleLikeToggle = async () => {
@@ -88,11 +114,18 @@ const PostDetail = () => {
     }
   };
 
-  const handleAddComment = () => {
+  const handleAddComment = async () => {
     if (!isLoggedIn) return alert("로그인이 필요한 기능입니다.");
-    if (!comment.trim()) return;
-    setComments((prev) => [...prev, comment]);
-    setComment("");
+    if (!comment.trim() || !id) return;
+
+    try {
+      await createComment(id, comment);
+      const updatedComments = await fetchComments(id);
+      setComments(updatedComments);
+      setComment("");
+    } catch (err) {
+      console.error("댓글 등록 실패:", err);
+    }
   };
 
   const handleDelete = async () => {
@@ -111,6 +144,19 @@ const PostDetail = () => {
     }
   };
 
+  const handleDeleteComment = async (commentId: string) => {
+    const confirm = window.confirm("댓글을 삭제하시겠습니까?");
+    if (!confirm) return;
+    try {
+      await deleteComment(commentId);
+      const updatedComments = await fetchComments(id!);
+      setComments(updatedComments);
+    } catch (err) {
+      alert("본인 댓글만 삭제할 수 있습니다.");
+      console.error("댓글 삭제 실패:", err);
+    }
+  };
+
   if (loading) return <Wrapper>로딩 중...</Wrapper>;
   if (!post) return <Wrapper>게시글을 불러올 수 없습니다.</Wrapper>;
 
@@ -121,14 +167,18 @@ const PostDetail = () => {
         <MenuToggle onClick={() => setShowMenu(!showMenu)}>⋮</MenuToggle>
         {showMenu && (
           <MenuBox>
-            <MenuItem onClick={handleDelete}>삭제하기</MenuItem>
+            {post.writer === myName && (
+              <MenuItem onClick={handleDelete}>삭제하기</MenuItem>
+            )}
             <MenuItem onClick={() => alert("신고되었습니다.")}>
               신고하기
             </MenuItem>
           </MenuBox>
         )}
       </TitleArea>
-      <MetaInfo>작성일: {post.createdAt}</MetaInfo>
+      <MetaInfo>
+        작성자: {post.writer} | 작성일: {post.createdAt}
+      </MetaInfo>
       <Content>{post.content}</Content>
 
       <FeedbackBox>
@@ -164,10 +214,13 @@ const PostDetail = () => {
         </CommentInputWrapper>
 
         <CommentList>
-          {comments.map((c, i) => (
-            <CommentItem key={i}>
-              <CommentAuthor>익명</CommentAuthor>
-              <CommentContent>{c}</CommentContent>
+          {comments.map((c) => (
+            <CommentItem key={c.commentId}>
+              {c.userName === myName && (
+                <DeleteIcon onClick={() => handleDeleteComment(c.commentId)} />
+              )}
+              <CommentAuthor>{c.userName}</CommentAuthor>
+              <CommentContent>{c.content}</CommentContent>
             </CommentItem>
           ))}
         </CommentList>
@@ -300,6 +353,23 @@ const CommentItem = styled.li`
   background-color: #f7f7f7;
   border-radius: 10px;
   padding: 0.7rem 1rem;
+  position: relative;
+`;
+
+const DeleteIcon = styled(FaTrashAlt)`
+  position: absolute;
+  top: 0.7rem;
+  right: 0.9rem;
+  color: #bbb;
+  cursor: pointer;
+  font-size: 1.5rem;
+  border-radius: 10px;
+  padding: 5px;
+
+  &:hover {
+    color: #d9534f;
+    background-color: #ddd;
+  }
 `;
 
 const CommentAuthor = styled.div`

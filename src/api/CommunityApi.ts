@@ -12,6 +12,14 @@ export interface BoardDetail extends Board {
   dislikeCount: number;
   liked: boolean;
   disliked: boolean;
+  writer: string;
+}
+
+export interface Comment {
+  commentId: string;
+  userName: string;
+  content: string;
+  createdAt: string;
 }
 
 // 게시글 작성
@@ -122,5 +130,39 @@ export const fetchTop3Posts = async (): Promise<Board[]> => {
   } catch (error) {
     console.error("Top3 게시글 조회 실패:", error);
     return [];
+  }
+};
+
+// 댓글 조회
+export const fetchComments = async (boardId: string): Promise<Comment[]> => {
+  try {
+    const response = await Axios.get(`/comments/${boardId}`);
+    return response.data.data.commentList;
+  } catch (error) {
+    console.error("댓글 조회 실패:", error);
+    throw error;
+  }
+};
+
+// 댓글 작성
+export const createComment = async (
+  boardId: string,
+  content: string
+): Promise<void> => {
+  try {
+    await Axios.post(`/comments/${boardId}`, { content });
+  } catch (error) {
+    console.error("댓글 작성 실패:", error);
+    throw error;
+  }
+};
+
+// 댓글 삭제
+export const deleteComment = async (commentId: string): Promise<void> => {
+  try {
+    await Axios.delete(`/comments/${commentId}`);
+  } catch (error) {
+    console.error("댓글 삭제 실패:", error);
+    throw error;
   }
 };
