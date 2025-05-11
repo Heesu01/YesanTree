@@ -45,13 +45,23 @@ export const fetchBoardDetail = async (
   boardId: string
 ): Promise<BoardDetail> => {
   try {
-    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true"; // ✅
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
     const url = isLoggedIn ? `/boards/${boardId}` : `/boards/one/${boardId}`;
 
     const response = await Axios.get(url);
     return response.data.data;
   } catch (error) {
     console.error("게시글 상세 조회 오류:", error);
+    throw error;
+  }
+};
+
+// 게시글 삭제
+export const deletePost = async (boardId: string): Promise<void> => {
+  try {
+    await Axios.delete(`/boards/${boardId}`);
+  } catch (error) {
+    console.error("게시글 삭제 실패:", error);
     throw error;
   }
 };
