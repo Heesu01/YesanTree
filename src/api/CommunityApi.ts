@@ -40,13 +40,21 @@ export const fetchAllPosts = async (
   }
 };
 
-// 게시글 상세 조회 (로그인 여부로 분기)
+// 게시글 상세 조회 (accessToken 쿠키 기반 분기)
 export const fetchBoardDetail = async (
   boardId: string
 ): Promise<BoardDetail> => {
   try {
-    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    const url = isLoggedIn ? `/boards/${boardId}` : `/boards/one/${boardId}`;
+    const cookies = document.cookie.split("; ").reduce((acc, curr) => {
+      const [key, value] = curr.split("=");
+      acc[key] = value;
+      return acc;
+    }, {} as Record<string, string>);
+
+    const hasAccessToken = Boolean(cookies.accessToken);
+    const url = hasAccessToken
+      ? `/boards/${boardId}`
+      : `/boards/one/${boardId}`;
 
     const response = await Axios.get(url);
     return response.data.data;
