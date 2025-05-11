@@ -47,7 +47,9 @@ const MainPage = () => {
     try {
       await login({ email, password });
       localStorage.setItem("isLoggedIn", "true");
-      navigate("/");
+      alert("로그인되었습니다.");
+      window.location.reload();
+      navigate("/budget/admin");
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         alert(err.response?.data?.message || "로그인에 실패했습니다.");
@@ -56,6 +58,7 @@ const MainPage = () => {
       }
     }
   };
+
   return (
     <Wrapper>
       <HeroSection>

@@ -29,7 +29,9 @@ const BudgetTab = () => {
           placeholder="찾고 싶은 예산 키워드를 입력해보세요."
         />
         <SearchButton onClick={handleSearch}>
-          <FiSearch size={20} />
+          <IconBox>
+            <FiSearch size={20} />
+          </IconBox>
         </SearchButton>
       </SearchBarWrapper>
 
@@ -102,6 +104,7 @@ const SearchInput = styled.input`
 `;
 
 const SearchButton = styled.button`
+  width: 10%;
   padding: 0 20px;
   background: none;
   border: none;
@@ -110,6 +113,13 @@ const SearchButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+`;
+
+const IconBox = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 `;
 
 const TabWrapper = styled.div`
