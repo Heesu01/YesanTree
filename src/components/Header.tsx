@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { FaUserCircle } from "react-icons/fa";
 import { getUserInfo, logout } from "../api/UserApi";
@@ -15,6 +15,7 @@ const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
   const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleMenu = () => {
     setMenuOpen((prev) => !prev);
@@ -34,6 +35,23 @@ const Header = () => {
       fetchUser();
     }
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+    if (showDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showDropdown]);
 
   const handleLogout = async () => {
     try {
@@ -84,7 +102,7 @@ const Header = () => {
         </Nav>
         <Btns>
           {userName ? (
-            <ProfileWrapper>
+            <ProfileWrapper ref={dropdownRef}>
               <ProfileButton onClick={() => setShowDropdown(!showDropdown)}>
                 <FaUserCircle size={20} />
                 <span>{userName} 님</span>

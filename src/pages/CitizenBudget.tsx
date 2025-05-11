@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import BudgetTab from "../components/BudgetTab";
-import { fetchCitizenBudget } from "../api/BudgetApi";
+import { fetchCitizenBudget, searchCitizenBudget } from "../api/BudgetApi";
 
 interface CitizenBudgetItem {
   bizName: string;
@@ -13,22 +14,30 @@ interface CitizenBudgetItem {
 const CitizenBudget = () => {
   const [data, setData] = useState<CitizenBudgetItem[]>([]);
   const [page, setPage] = useState(1);
+  const [searchParams] = useSearchParams();
+  const keyword = searchParams.get("keyword");
 
   useEffect(() => {
     const load = async () => {
       try {
-        const result = await fetchCitizenBudget(page);
-        if (result.length === 0 && page > 1) {
-          setPage((p) => Math.max(p - 1, 1));
-          return;
+        if (keyword) {
+          const result = await searchCitizenBudget(keyword);
+          setData(result ?? []);
+        } else {
+          const result = await fetchCitizenBudget(page);
+          if (result.length === 0 && page > 1) {
+            setPage((p) => Math.max(p - 1, 1));
+            return;
+          }
+          setData(result);
         }
-        setData(result);
       } catch (err) {
         console.error("시민예산 데이터를 불러오지 못했습니다.", err);
+        setData([]);
       }
     };
     load();
-  }, [page]);
+  }, [page, keyword]);
 
   const getPageNumbers = () => {
     const maxPagesToShow = 5;
@@ -72,25 +81,30 @@ const CitizenBudget = () => {
               </Cell>
             </BudgetItem>
           ))}
+          {keyword && data.length === 0 && (
+            <NoResultMessage>검색 결과가 없습니다.</NoResultMessage>
+          )}
         </BudgetList>
 
-        <PaginationWrapper>
-          <PageButton onClick={() => setPage((p) => Math.max(p - 1, 1))}>
-            &lt;
-          </PageButton>
+        {!keyword && (
+          <PaginationWrapper>
+            <PageButton onClick={() => setPage((p) => Math.max(p - 1, 1))}>
+              &lt;
+            </PageButton>
 
-          {getPageNumbers().map((p) => (
-            <PageNumber
-              key={p}
-              className={p === page ? "active" : ""}
-              onClick={() => setPage(p)}
-            >
-              {p}
-            </PageNumber>
-          ))}
+            {getPageNumbers().map((p) => (
+              <PageNumber
+                key={p}
+                className={p === page ? "active" : ""}
+                onClick={() => setPage(p)}
+              >
+                {p}
+              </PageNumber>
+            ))}
 
-          <PageButton onClick={() => setPage((p) => p + 1)}>&gt;</PageButton>
-        </PaginationWrapper>
+            <PageButton onClick={() => setPage((p) => p + 1)}>&gt;</PageButton>
+          </PaginationWrapper>
+        )}
       </ContentSection>
     </Wrapper>
   );
@@ -98,7 +112,9 @@ const CitizenBudget = () => {
 
 export default CitizenBudget;
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  min-height: 90vh;
+`;
 
 const ContentSection = styled.section`
   padding: 24px 80px;
@@ -149,6 +165,13 @@ const Cell = styled.div<{ hideOnMobile?: boolean }>`
       display: none;
     }
   `}
+`;
+
+const NoResultMessage = styled.div`
+  margin: 40px 0;
+  text-align: center;
+  font-size: 16px;
+  color: #888;
 `;
 
 const PaginationWrapper = styled.div`

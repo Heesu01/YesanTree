@@ -1,9 +1,11 @@
 import styled from "styled-components";
 import { useState, useEffect, useRef } from "react";
 import { FiInfo } from "react-icons/fi";
+import { useSearchParams } from "react-router-dom";
 import BudgetTab from "../components/BudgetTab";
 import BudgetChart from "../components/BudgetChart";
-import { fetchSimpleBudget } from "../api/BudgetApi";
+import PieChartBox from "../components/PieChartBox";
+import { fetchSimpleBudget, searchAdminBudget } from "../api/BudgetApi";
 
 interface SimpleBudgetItem {
   deptName: string;
@@ -18,6 +20,8 @@ const AdminBudget = () => {
   const [field, setField] = useState("NATN_CURR_AMT");
   const [page, setPage] = useState(1);
   const [data, setData] = useState<SimpleBudgetItem[]>([]);
+  const [searchParams] = useSearchParams();
+  const keyword = searchParams.get("keyword");
   const infoRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,14 +37,20 @@ const AdminBudget = () => {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetchSimpleBudget(page, field);
-        setData(res);
+        if (keyword) {
+          const result = await searchAdminBudget(keyword);
+          setData(Array.isArray(result) ? result : []);
+        } else {
+          const res = await fetchSimpleBudget(page, field);
+          setData(Array.isArray(res) ? res : []);
+        }
       } catch (err) {
         console.error("예산 데이터를 불러오지 못했습니다.", err);
+        setData([]);
       }
     };
     load();
-  }, [page, field]);
+  }, [page, field, keyword]);
 
   const handleFieldChange = (newField: string) => {
     setField(newField);
@@ -134,21 +144,27 @@ const AdminBudget = () => {
                   </Amount>
                 </BudgetItem>
               ))}
+              {keyword && data.length === 0 && (
+                <NoResultMessage>검색 결과가 없습니다.</NoResultMessage>
+              )}
             </BudgetList>
 
-            <PaginationWrapper>
-              <PageButton onClick={() => setPage((p) => Math.max(p - 1, 1))}>
-                &lt;
-              </PageButton>
-              {renderPageNumbers()}
-              <PageButton onClick={() => setPage((p) => p + 1)}>
-                &gt;
-              </PageButton>
-            </PaginationWrapper>
+            {!keyword && (
+              <PaginationWrapper>
+                <PageButton onClick={() => setPage((p) => Math.max(p - 1, 1))}>
+                  &lt;
+                </PageButton>
+                {renderPageNumbers()}
+                <PageButton onClick={() => setPage((p) => p + 1)}>
+                  &gt;
+                </PageButton>
+              </PaginationWrapper>
+            )}
           </LeftSection>
 
           <RightSection>
             <BudgetChart />
+            <PieChartBox />
           </RightSection>
         </MainContent>
       </ContentSection>
@@ -182,13 +198,13 @@ const FilterBtns = styled.button`
   background-color: #fff;
 `;
 
-const FilterButton = styled.button`
+const FilterButton = styled.div`
   padding: 8px 20px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
-
+  background-color: #f4f4f4;
   &.active {
     background-color: #6dad5b;
     color: white;
@@ -248,6 +264,9 @@ const LeftSection = styled.div`
 const RightSection = styled.div`
   flex: 1.5;
   margin-top: 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 
   @media (max-width: 768px) {
     display: none;
@@ -297,6 +316,13 @@ const Amount = styled.span`
   @media (max-width: 768px) {
     font-size: 13px;
   }
+`;
+
+const NoResultMessage = styled.div`
+  margin: 40px 0;
+  text-align: center;
+  font-size: 16px;
+  color: #888;
 `;
 
 const PaginationWrapper = styled.div`

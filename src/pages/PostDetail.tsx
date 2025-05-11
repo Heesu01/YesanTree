@@ -8,6 +8,7 @@ import {
   unlikePost,
   dislikePost,
   undislikePost,
+  deletePost,
 } from "../api/CommunityApi";
 import type { BoardDetail } from "../api/CommunityApi";
 
@@ -21,6 +22,8 @@ const PostDetail = () => {
   const [disliked, setDisliked] = useState(false);
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState<string[]>([]);
+  const [showMenu, setShowMenu] = useState(false);
+
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
 
   useEffect(() => {
@@ -42,10 +45,7 @@ const PostDetail = () => {
   }, [id]);
 
   const handleLikeToggle = async () => {
-    if (!isLoggedIn) {
-      alert("로그인이 필요한 기능입니다.");
-      return;
-    }
+    if (!isLoggedIn) return alert("로그인이 필요한 기능입니다.");
     if (!post) return;
     try {
       if (liked) {
@@ -67,10 +67,7 @@ const PostDetail = () => {
   };
 
   const handleDislikeToggle = async () => {
-    if (!isLoggedIn) {
-      alert("로그인이 필요한 기능입니다.");
-      return;
-    }
+    if (!isLoggedIn) return alert("로그인이 필요한 기능입니다.");
     if (!post) return;
     try {
       if (disliked) {
@@ -92,14 +89,26 @@ const PostDetail = () => {
   };
 
   const handleAddComment = () => {
-    if (!isLoggedIn) {
-      alert("로그인이 필요한 기능입니다.");
-      return;
-    }
-
+    if (!isLoggedIn) return alert("로그인이 필요한 기능입니다.");
     if (!comment.trim()) return;
     setComments((prev) => [...prev, comment]);
     setComment("");
+  };
+
+  const handleDelete = async () => {
+    if (!isLoggedIn) return alert("로그인이 필요한 기능입니다.");
+    if (!post) return;
+    const confirm = window.confirm("정말 삭제하시겠습니까?");
+    if (!confirm) return;
+
+    try {
+      await deletePost(post.boardId);
+      alert("삭제되었습니다.");
+      window.location.href = "/community";
+    } catch (err) {
+      alert("본인 게시글만 삭제할 수 있습니다.");
+      console.error(err);
+    }
   };
 
   if (loading) return <Wrapper>로딩 중...</Wrapper>;
@@ -107,7 +116,18 @@ const PostDetail = () => {
 
   return (
     <Wrapper>
-      <Title>{post.title}</Title>
+      <TitleArea>
+        <Title>{post.title}</Title>
+        <MenuToggle onClick={() => setShowMenu(!showMenu)}>⋮</MenuToggle>
+        {showMenu && (
+          <MenuBox>
+            <MenuItem onClick={handleDelete}>삭제하기</MenuItem>
+            <MenuItem onClick={() => alert("신고되었습니다.")}>
+              신고하기
+            </MenuItem>
+          </MenuBox>
+        )}
+      </TitleArea>
       <MetaInfo>작성일: {post.createdAt}</MetaInfo>
       <Content>{post.content}</Content>
 
@@ -290,4 +310,40 @@ const CommentAuthor = styled.div`
 const CommentContent = styled.div`
   font-size: 0.95rem;
   line-height: 1.6;
+`;
+
+const TitleArea = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+`;
+
+const MenuToggle = styled.button`
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+`;
+
+const MenuBox = styled.div`
+  position: absolute;
+  top: 2.5rem;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+`;
+
+const MenuItem = styled.div`
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+
+  &:hover {
+    background-color: #f7f7f7;
+  }
 `;

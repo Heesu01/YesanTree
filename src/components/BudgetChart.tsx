@@ -13,6 +13,14 @@ import moneyIcon from "../assets/money.png";
 import { fetchTop10Budget } from "../api/BudgetApi";
 import type { TopBudgetItem } from "../api/BudgetApi";
 
+type CustomTooltipPayload = {
+  payload: {
+    name: string;
+    fullName?: string;
+    value: number;
+  };
+};
+
 const BudgetChartBox = () => {
   const [data, setData] = useState<TopBudgetItem[]>([]);
 
@@ -33,6 +41,7 @@ const BudgetChartBox = () => {
       item.deptName.length > 6
         ? item.deptName.slice(0, 6) + "…"
         : item.deptName,
+    fullName: item.deptName,
     amount: Number(item.value.replace(/,/g, "")),
     fill: "#a0d468",
   }));
@@ -71,7 +80,13 @@ const BudgetChartBox = () => {
             />
 
             <Tooltip
-              formatter={(value: number) => `₩ ${formatToShortUnit(value)}`}
+              formatter={(value: number) => [
+                `₩ ${formatToShortUnit(value)}`,
+                "예산액",
+              ]}
+              labelFormatter={(_, payload) =>
+                (payload?.[0] as CustomTooltipPayload)?.payload?.fullName || ""
+              }
             />
 
             <Bar dataKey="amount">
