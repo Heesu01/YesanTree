@@ -253,7 +253,7 @@ const Dropdown = styled.div`
   top: 200%;
   width: 100px;
   right: -10%;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(194, 194, 194, 0.158);
   border-radius: 4px;
   overflow: hidden;
   z-index: 999;

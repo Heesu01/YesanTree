@@ -1,43 +1,132 @@
 import styled from "styled-components";
 import { FaRegThumbsUp, FaRegThumbsDown } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import {
+  fetchBoardDetail,
+  likePost,
+  unlikePost,
+  dislikePost,
+  undislikePost,
+} from "../api/CommunityApi";
+import type { BoardDetail } from "../api/CommunityApi";
 
 const PostDetail = () => {
-  const post = {
-    title: "이 사업, 예산 대비 효과 있다고 보시나요? [투표 요청]",
-    date: "2025.05.03",
-    content: `2025년 예산안 중 복지 예산이 충분히 효과를 거두고 있는지에 대한 토론이 활발합니다.
-최근 발표된 시민 참여 사업의 결과 보고서에 따르면 예산 투입 대비 체감 효과가 낮은 사례도 있다는 의견이 있습니다.
-다양한 시민 의견을 듣고 싶어 이 글을 작성했습니다. 많은 의견 부탁드립니다!`,
-  };
-
+  const { id } = useParams<{ id: string }>();
+  const [post, setPost] = useState<BoardDetail | null>(null);
+  const [loading, setLoading] = useState(true);
   const [upCount, setUpCount] = useState(0);
   const [downCount, setDownCount] = useState(0);
+  const [liked, setLiked] = useState(false);
+  const [disliked, setDisliked] = useState(false);
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState<string[]>([]);
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+  useEffect(() => {
+    const loadPost = async () => {
+      try {
+        const data = await fetchBoardDetail(id!);
+        setPost(data);
+        setUpCount(data.likeCount);
+        setDownCount(data.dislikeCount);
+        setLiked(data.liked);
+        setDisliked(data.disliked);
+      } catch (err) {
+        console.error("상세 조회 실패:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadPost();
+  }, [id]);
+
+  const handleLikeToggle = async () => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요한 기능입니다.");
+      return;
+    }
+    if (!post) return;
+    try {
+      if (liked) {
+        await unlikePost(post.boardId);
+        setUpCount((c) => c - 1);
+      } else {
+        await likePost(post.boardId);
+        setUpCount((c) => c + 1);
+        if (disliked) {
+          await undislikePost(post.boardId);
+          setDownCount((c) => c - 1);
+          setDisliked(false);
+        }
+      }
+      setLiked(!liked);
+    } catch (err) {
+      console.error("좋아요 처리 실패:", err);
+    }
+  };
+
+  const handleDislikeToggle = async () => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요한 기능입니다.");
+      return;
+    }
+    if (!post) return;
+    try {
+      if (disliked) {
+        await undislikePost(post.boardId);
+        setDownCount((c) => c - 1);
+      } else {
+        await dislikePost(post.boardId);
+        setDownCount((c) => c + 1);
+        if (liked) {
+          await unlikePost(post.boardId);
+          setUpCount((c) => c - 1);
+          setLiked(false);
+        }
+      }
+      setDisliked(!disliked);
+    } catch (err) {
+      console.error("싫어요 처리 실패:", err);
+    }
+  };
 
   const handleAddComment = () => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요한 기능입니다.");
+      return;
+    }
+
     if (!comment.trim()) return;
     setComments((prev) => [...prev, comment]);
     setComment("");
   };
 
+  if (loading) return <Wrapper>로딩 중...</Wrapper>;
+  if (!post) return <Wrapper>게시글을 불러올 수 없습니다.</Wrapper>;
+
   return (
     <Wrapper>
       <Title>{post.title}</Title>
-      <MetaInfo>작성일: {post.date}</MetaInfo>
+      <MetaInfo>작성일: {post.createdAt}</MetaInfo>
       <Content>{post.content}</Content>
 
       <FeedbackBox>
         <FeedbackGroup>
-          <FeedbackButton onClick={() => setUpCount((c) => c + 1)}>
+          <FeedbackButton
+            onClick={handleLikeToggle}
+            className={liked ? "active" : ""}
+          >
             <FaRegThumbsUp />
           </FeedbackButton>
           <VoteCount>{upCount}</VoteCount>
         </FeedbackGroup>
 
         <FeedbackGroup>
-          <FeedbackButton onClick={() => setDownCount((c) => c + 1)}>
+          <FeedbackButton
+            onClick={handleDislikeToggle}
+            className={disliked ? "active" : ""}
+          >
             <FaRegThumbsDown />
           </FeedbackButton>
           <VoteCount>{downCount}</VoteCount>
@@ -122,6 +211,11 @@ const FeedbackButton = styled.button`
   justify-content: center;
 
   &:hover {
+    background-color: #f1ffdb;
+    border-color: #4e7c3a;
+  }
+
+  &.active {
     background-color: #f1ffdb;
     border-color: #4e7c3a;
   }

@@ -1,69 +1,57 @@
 import styled from "styled-components";
 import communityIcon from "../assets/community.png";
 import { useNavigate } from "react-router-dom";
-
-const posts = [
-  {
-    id: 1,
-    title: "이 사업, 예산 대비 효과 있다고 보시나요? [투표 요청]",
-    date: "2025.05.03",
-  },
-  {
-    id: 2,
-    title: "자전거 도로 정비에 더 투자해야 하지 않을까요?",
-    date: "2025.04.29",
-  },
-  {
-    id: 3,
-    title: "2025년 구 예산 중복 사업 정리 필요해 보여요",
-    date: "2025.04.24",
-  },
-  {
-    id: 4,
-    title: "도봉공원 산책로 조명 설치, 예산 제안드립니다!",
-    date: "2025.04.21",
-  },
-  {
-    id: 5,
-    title: "우리 동네 놀이터, 더 안전하게 만들 수 없을까요?",
-    date: "2025.04.21",
-  },
-  {
-    id: 3,
-    title: "2025년 구 예산 중복 사업 정리 필요해 보여요",
-    date: "2025.04.24",
-  },
-  {
-    id: 4,
-    title: "도봉공원 산책로 조명 설치, 예산 제안드립니다!",
-    date: "2025.04.21",
-  },
-];
-
-const popularPosts = [
-  {
-    id: 1,
-    title: "작은 도서관 조성사업, 이 위치면 좋겠어요!",
-    date: "2025.04.19",
-  },
-  {
-    id: 2,
-    title: "도봉공원 산책로 조명 설치, 예산 제안드립니다!",
-    date: "2025.04.21",
-  },
-  {
-    id: 3,
-    title: "이 사업, 예산 대비 효과 있다고 보시나요? [투표 요청]",
-    date: "2025.05.03",
-  },
-];
+import { useEffect, useState } from "react";
+import { fetchAllPosts, fetchTop3Posts } from "../api/CommunityApi";
+import type { Board } from "../api/CommunityApi";
 
 const CommunityPage = () => {
   const navigate = useNavigate();
+  const [posts, setPosts] = useState<Board[]>([]);
+  const [topPosts, setTopPosts] = useState<Board[]>([]);
+  const [sortType, setSortType] = useState<"latest" | "popular">("latest");
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 5;
+
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+  const totalPages = Math.ceil(posts.length / postsPerPage);
 
   const handleWriteClick = () => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+    if (!isLoggedIn) {
+      alert("로그인이 필요한 기능입니다.");
+      return;
+    }
+
     navigate("/write");
   };
+
+  useEffect(() => {
+    const loadPosts = async () => {
+      try {
+        const data = await fetchAllPosts(sortType);
+        setPosts(data);
+        setCurrentPage(1);
+      } catch (err) {
+        console.error("게시글 불러오기 실패:", err);
+      }
+    };
+
+    const loadTopPosts = async () => {
+      try {
+        const data = await fetchTop3Posts();
+        setTopPosts(data);
+      } catch (err) {
+        console.error("Top3 불러오기 실패:", err);
+      }
+    };
+
+    loadPosts();
+    loadTopPosts();
+  }, [sortType]);
 
   return (
     <PageWrapper>
@@ -75,41 +63,83 @@ const CommunityPage = () => {
       <ContentArea>
         <LeftSection>
           <SortBox>
-            <SortOption active>최신순</SortOption>
+            <SortOption
+              active={sortType === "latest"}
+              onClick={() => setSortType("latest")}
+            >
+              최신순
+            </SortOption>
             <SortDivider>|</SortDivider>
-            <SortOption>인기순</SortOption>
+            <SortOption
+              active={sortType === "popular"}
+              onClick={() => setSortType("popular")}
+            >
+              인기순
+            </SortOption>
           </SortBox>
 
-          {posts.map((post) => (
-            <PostItem
-              key={post.id}
-              onClick={() => navigate(`/community/${post.id}`)}
-            >
-              <PostTitle>{post.title}</PostTitle>
-              <PostDate>{post.date}</PostDate>
-            </PostItem>
-          ))}
+          {currentPosts.length === 0 ? (
+            <NoPostMessage>작성된 글이 없습니다.</NoPostMessage>
+          ) : (
+            currentPosts.map((post) => (
+              <PostItem
+                key={post.boardId}
+                onClick={() => navigate(`/community/${post.boardId}`)}
+              >
+                <PostTitle>{post.title}</PostTitle>
+                <PostDate>{post.createdAt}</PostDate>
+              </PostItem>
+            ))
+          )}
+
           <WriteSection>
             <WriteButton onClick={handleWriteClick}>글쓰기</WriteButton>
           </WriteSection>
 
           <PaginationWrapper>
-            <PageButton>&lt;</PageButton>
-            <PageNumber className="active">1</PageNumber>
-            <PageNumber>2</PageNumber>
-            <PageNumber>3</PageNumber>
-            <PageButton>&gt;</PageButton>
+            <PageButton
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            >
+              &lt;
+            </PageButton>
+
+            {[...Array(totalPages)].map((_, index) => (
+              <PageNumber
+                key={index + 1}
+                onClick={() => setCurrentPage(index + 1)}
+                className={currentPage === index + 1 ? "active" : ""}
+              >
+                {index + 1}
+              </PageNumber>
+            ))}
+
+            <PageButton
+              disabled={currentPage === totalPages}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+            >
+              &gt;
+            </PageButton>
           </PaginationWrapper>
         </LeftSection>
 
         <RightSection>
           <PopularTitle>인기글 TOP3</PopularTitle>
-          {popularPosts.map((post) => (
-            <PopularPost key={post.id}>
-              <p>{post.title}</p>
-              <span>{post.date}</span>
-            </PopularPost>
-          ))}
+          {topPosts.length === 0 ? (
+            <NoPostMessage>인기글이 없습니다.</NoPostMessage>
+          ) : (
+            topPosts.map((post) => (
+              <PopularPost
+                key={post.boardId}
+                onClick={() => navigate(`/community/${post.boardId}`)}
+              >
+                <p>{post.title}</p>
+                <span>{post.createdAt}</span>
+              </PopularPost>
+            ))
+          )}
         </RightSection>
       </ContentArea>
     </PageWrapper>
@@ -182,7 +212,9 @@ const SortBox = styled.div`
   }
 `;
 
-const SortOption = styled.span<{ active?: boolean }>`
+const SortOption = styled.span.withConfig({
+  shouldForwardProp: (prop) => prop !== "active",
+})<{ active?: boolean }>`
   font-weight: ${(props) => (props.active ? "bold" : "normal")};
   color: ${(props) => (props.active ? "#222" : "#777")};
   cursor: pointer;
@@ -190,6 +222,13 @@ const SortOption = styled.span<{ active?: boolean }>`
 
 const SortDivider = styled.span`
   margin: 0 0.5rem;
+`;
+
+const NoPostMessage = styled.div`
+  padding: 2rem;
+  text-align: center;
+  color: #aaa;
+  font-size: 1rem;
 `;
 
 const PostItem = styled.div`
@@ -280,6 +319,11 @@ const PopularPost = styled.div`
   border: 1px solid #ddd;
   border-radius: 10px;
   margin-bottom: 1rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f8f8f8;
+  }
 
   p {
     font-size: 0.9rem;
