@@ -8,54 +8,43 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
+import { useEffect, useState } from "react";
 import moneyIcon from "../assets/money.png";
-
-const adminBudgetData = [
-  {
-    category: "문화및관광",
-    title: "국가유산 야행",
-    amount: 272_000_000,
-    color: "#fbb",
-  },
-  {
-    category: "소방특별회계",
-    title: "119특수구조단 행정지원과",
-    amount: 6_30_000_000,
-    color: "#fdd",
-  },
-  {
-    category: "보건",
-    title: "지방의료원 정보화 지원",
-    amount: 26_000_000,
-    color: "#ffc",
-  },
-  {
-    category: "문화및관광",
-    title: "신나는 주말체육 프로그램 지원",
-    amount: 567_615_000,
-    color: "#fbb",
-  },
-  {
-    category: "환경",
-    title: "전기차 보급",
-    amount: 73_787_726_5,
-    color: "#ccf",
-  },
-  {
-    category: "사회복지",
-    title: "장애인등록진단비 지원",
-    amount: 93_300_000,
-    color: "#cfc",
-  },
-];
-
-const chartData = adminBudgetData.map((item) => ({
-  name: item.title.length > 10 ? item.title.slice(0, 10) + "…" : item.title,
-  amount: item.amount,
-  fill: item.color,
-}));
+import { fetchTop10Budget } from "../api/BudgetApi";
+import type { TopBudgetItem } from "../api/BudgetApi";
 
 const BudgetChartBox = () => {
+  const [data, setData] = useState<TopBudgetItem[]>([]);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const result = await fetchTop10Budget("SUB_SUM_CURR_AMT");
+        setData(result);
+      } catch (err) {
+        console.error("Top10 예산 데이터를 불러오지 못했습니다.", err);
+      }
+    };
+    load();
+  }, []);
+
+  const chartData = data.map((item) => ({
+    name:
+      item.deptName.length > 6
+        ? item.deptName.slice(0, 6) + "…"
+        : item.deptName,
+    amount: Number(item.value.replace(/,/g, "")),
+    fill: "#a0d468",
+  }));
+
+  const formatToShortUnit = (value: number) => {
+    if (value >= 1_0000_0000_0000)
+      return `${(value / 1_0000_0000_0000).toFixed(1)}조`;
+    if (value >= 1_0000_0000) return `${(value / 1_0000_0000).toFixed(1)}억`;
+    if (value >= 1_0000) return `${(value / 1_0000).toFixed(1)}만`;
+    return value.toLocaleString();
+  };
+
   return (
     <ChartBox>
       <ChartTitleWithIcon>
@@ -68,11 +57,23 @@ const BudgetChartBox = () => {
       <ChartArea>
         <ResponsiveContainer width="100%" height={250}>
           <BarChart data={chartData} margin={{ top: 10, bottom: 30 }}>
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip
-              formatter={(value) => `₩${Number(value).toLocaleString()}`}
+            <XAxis
+              dataKey="name"
+              interval={0}
+              angle={-45}
+              textAnchor="end"
+              height={60}
             />
+
+            <YAxis
+              width={80}
+              tickFormatter={(value) => formatToShortUnit(value)}
+            />
+
+            <Tooltip
+              formatter={(value: number) => `₩ ${formatToShortUnit(value)}`}
+            />
+
             <Bar dataKey="amount">
               {chartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} />
@@ -122,5 +123,5 @@ const ChartSub = styled.div`
 
 const ChartArea = styled.div`
   width: 100%;
-  height: 250px;
+  min-height: 250px;
 `;
