@@ -1,13 +1,29 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { createPost } from "../api/CommunityApi";
+import { useNavigate } from "react-router-dom";
 
 const Write = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert("글이 등록되었습니다!");
+
+    if (!title.trim() || !content.trim()) {
+      alert("제목과 내용을 모두 입력해주세요.");
+      return;
+    }
+
+    try {
+      await createPost({ title, content });
+      alert("글이 등록되었습니다!");
+      navigate("/community");
+    } catch (error) {
+      console.error("게시글 등록 실패:", error);
+      alert("등록에 실패했습니다.");
+    }
   };
 
   return (

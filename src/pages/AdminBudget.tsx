@@ -3,48 +3,21 @@ import { useState, useEffect, useRef } from "react";
 import { FiInfo } from "react-icons/fi";
 import BudgetTab from "../components/BudgetTab";
 import BudgetChart from "../components/BudgetChart";
+import { fetchSimpleBudget } from "../api/BudgetApi";
 
-const adminBudgetData = [
-  {
-    category: "문화및관광",
-    title: "국가유산 야행",
-    amount: 272_000_000,
-    color: "#fbb",
-  },
-  {
-    category: "소방특별회계",
-    title: "119특수구조단 행정지원과",
-    amount: 9_3_000_000,
-    color: "#fdd",
-  },
-  {
-    category: "보건",
-    title: "지방의료원 정보화 지원",
-    amount: 26_000_000,
-    color: "#ffc",
-  },
-  {
-    category: "문화및관광",
-    title: "신나는 주말체육 프로그램 지원",
-    amount: 567_615_000,
-    color: "#fbb",
-  },
-  {
-    category: "환경",
-    title: "전기차 보급",
-    amount: 73_7_726_500,
-    color: "#ccf",
-  },
-  {
-    category: "사회복지",
-    title: "장애인등록진단비 지원",
-    amount: 93_300_000,
-    color: "#cfc",
-  },
-];
+interface SimpleBudgetItem {
+  deptName: string;
+  value: string;
+  fieldName: string;
+  bgColor: string;
+  textColor: string;
+}
 
 const AdminBudget = () => {
   const [showInfo, setShowInfo] = useState(false);
+  const [field, setField] = useState("NATN_CURR_AMT");
+  const [page, setPage] = useState(1);
+  const [data, setData] = useState<SimpleBudgetItem[]>([]);
   const infoRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -57,6 +30,42 @@ const AdminBudget = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetchSimpleBudget(page, field);
+        setData(res);
+      } catch (err) {
+        console.error("예산 데이터를 불러오지 못했습니다.", err);
+      }
+    };
+    load();
+  }, [page, field]);
+
+  const handleFieldChange = (newField: string) => {
+    setField(newField);
+    setPage(1);
+  };
+
+  const renderPageNumbers = () => {
+    const maxPagesToShow = 5;
+    const pages = [];
+    const startPage = Math.max(1, page - Math.floor(maxPagesToShow / 2));
+
+    for (let i = startPage; i < startPage + maxPagesToShow; i++) {
+      pages.push(
+        <PageNumber
+          key={i}
+          className={i === page ? "active" : ""}
+          onClick={() => setPage(i)}
+        >
+          {i}
+        </PageNumber>
+      );
+    }
+    return pages;
+  };
+
   return (
     <Wrapper>
       <BudgetTab />
@@ -66,10 +75,31 @@ const AdminBudget = () => {
           <LeftSection>
             <CategoryFilter>
               <FilterBtns>
-                <FilterButton className="active">국비</FilterButton>
-                <FilterButton>도비</FilterButton>
-                <FilterButton>편성액</FilterButton>
-                <FilterButton>소계</FilterButton>
+                <FilterButton
+                  className={field === "NATN_CURR_AMT" ? "active" : ""}
+                  onClick={() => handleFieldChange("NATN_CURR_AMT")}
+                >
+                  국비
+                </FilterButton>
+                <FilterButton
+                  className={field === "SIDO_CURR_AMT" ? "active" : ""}
+                  onClick={() => handleFieldChange("SIDO_CURR_AMT")}
+                >
+                  도비
+                </FilterButton>
+
+                <FilterButton
+                  className={field === "COMPO_AMT" ? "active" : ""}
+                  onClick={() => handleFieldChange("COMPO_AMT")}
+                >
+                  편성액
+                </FilterButton>
+                <FilterButton
+                  className={field === "SUB_SUM_CURR_AMT" ? "active" : ""}
+                  onClick={() => handleFieldChange("SUB_SUM_CURR_AMT")}
+                >
+                  소계
+                </FilterButton>
               </FilterBtns>
               <InfoBoxWrapper ref={infoRef}>
                 <InfoButton onClick={() => setShowInfo(!showInfo)}>
@@ -93,21 +123,27 @@ const AdminBudget = () => {
             </CategoryFilter>
 
             <BudgetList>
-              {adminBudgetData.map((item, index) => (
+              {data.map((item, index) => (
                 <BudgetItem key={index}>
-                  <Tag color={item.color}>{item.category}</Tag>
-                  <Title>{item.title}</Title>
-                  <Amount>₩ {item.amount.toLocaleString()}</Amount>
+                  <Tag color={item.bgColor} textColor={item.textColor}>
+                    {item.fieldName}
+                  </Tag>
+                  <Title>{item.deptName}</Title>
+                  <Amount>
+                    ₩ {Number(item.value.replace(/,/g, "")).toLocaleString()}
+                  </Amount>
                 </BudgetItem>
               ))}
             </BudgetList>
 
             <PaginationWrapper>
-              <PageButton>&lt;</PageButton>
-              <PageNumber className="active">1</PageNumber>
-              <PageNumber>2</PageNumber>
-              <PageNumber>3</PageNumber>
-              <PageButton>&gt;</PageButton>
+              <PageButton onClick={() => setPage((p) => Math.max(p - 1, 1))}>
+                &lt;
+              </PageButton>
+              {renderPageNumbers()}
+              <PageButton onClick={() => setPage((p) => p + 1)}>
+                &gt;
+              </PageButton>
             </PaginationWrapper>
           </LeftSection>
 
@@ -232,8 +268,9 @@ const BudgetItem = styled.div`
   padding: 16px 5px;
 `;
 
-const Tag = styled.span<{ color: string }>`
+const Tag = styled.span<{ color: string; textColor?: string }>`
   background-color: ${(props) => props.color};
+  color: ${(props) => props.textColor || "#000"};
   padding: 6px 10px;
   border-radius: 6px;
   font-size: 14px;

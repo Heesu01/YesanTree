@@ -1,115 +1,95 @@
 import styled from "styled-components";
+import { useEffect, useState } from "react";
 import BudgetTab from "../components/BudgetTab";
+import { fetchCitizenBudget } from "../api/BudgetApi";
 
-const citizenBudgetData = [
-  {
-    title: "지역 소공원 정비사업",
-    amount: 30000000,
-    year: 2025,
-    location: "서울특별시 강동구",
-  },
-  {
-    title: "골목길 안전조명 설치",
-    amount: 12000000,
-    year: 2025,
-    location: "서울특별시 중랑구",
-  },
-  {
-    title: "어르신 쉼터 개선",
-    amount: 22000000,
-    year: 2024,
-    location: "서울특별시 마포구",
-  },
-  {
-    title: "지역 소공원 정비사업",
-    amount: 30000000,
-    year: 2025,
-    location: "서울특별시 강동구",
-  },
-  {
-    title: "골목길 안전조명 설치",
-    amount: 12000000,
-    year: 2025,
-    location: "서울특별시 중랑구",
-  },
-  {
-    title: "어르신 쉼터 개선",
-    amount: 22000000,
-    year: 2024,
-    location: "서울특별시 마포구",
-  },
-  {
-    title: "지역 소공원 정비사업",
-    amount: 30000000,
-    year: 2025,
-    location: "서울특별시 강동구",
-  },
-  {
-    title: "골목길 안전조명 설치",
-    amount: 12000000,
-    year: 2025,
-    location: "서울특별시 중랑구",
-  },
-  {
-    title: "어르신 쉼터 개선",
-    amount: 22000000,
-    year: 2024,
-    location: "서울특별시 마포구",
-  },
-  {
-    title: "지역 소공원 정비사업",
-    amount: 30000000,
-    year: 2025,
-    location: "서울특별시 강동구",
-  },
-  {
-    title: "골목길 안전조명 설치",
-    amount: 12000000,
-    year: 2025,
-    location: "서울특별시 중랑구",
-  },
-  {
-    title: "어르신 쉼터 개선",
-    amount: 22000000,
-    year: 2024,
-    location: "서울특별시 마포구",
-  },
-];
+interface CitizenBudgetItem {
+  bizName: string;
+  budgetCost: string;
+  year: string;
+  location: string;
+}
 
 const CitizenBudget = () => {
+  const [data, setData] = useState<CitizenBudgetItem[]>([]);
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const result = await fetchCitizenBudget(page);
+        if (result.length === 0 && page > 1) {
+          setPage((p) => Math.max(p - 1, 1));
+          return;
+        }
+        setData(result);
+      } catch (err) {
+        console.error("시민예산 데이터를 불러오지 못했습니다.", err);
+      }
+    };
+    load();
+  }, [page]);
+
+  const getPageNumbers = () => {
+    const maxPagesToShow = 5;
+    const pages = [];
+
+    let start = 1;
+
+    if (page > 3) {
+      start = page - 2;
+    }
+
+    for (let i = start; i < start + maxPagesToShow; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  };
+
   return (
     <Wrapper>
       <BudgetTab />
 
       <ContentSection>
         <TitleRow>
-          <TitleCell>사업명</TitleCell>
-          <TitleCell>예산편성사업비</TitleCell>
-          <TitleCell as={Cell} hideOnMobile>
+          <TitleCell style={{ width: "50%" }}>사업명</TitleCell>
+          <TitleCell style={{ width: "30%" }}>예산편성사업비</TitleCell>
+          <TitleCell as={Cell} style={{ width: "20%" }} hideOnMobile>
             년도
           </TitleCell>
-          <TitleCell>사업위치</TitleCell>
         </TitleRow>
 
         <BudgetList>
-          {citizenBudgetData.map((item, index) => (
+          {data.map((item, index) => (
             <BudgetItem key={index}>
-              <Cell>{item.title}</Cell>
-              <Cell>₩ {item.amount.toLocaleString()}</Cell>
-              <Cell hideOnMobile>
+              <Cell style={{ width: "50%" }}>{item.bizName}</Cell>
+              <Cell style={{ width: "30%" }}>
+                ₩ {Number(item.budgetCost.replace(/,/g, "")).toLocaleString()}
+              </Cell>
+              <Cell style={{ width: "20%" }} hideOnMobile>
                 <span>{item.year}</span>
               </Cell>
-              <Cell>{item.location}</Cell>
             </BudgetItem>
           ))}
         </BudgetList>
 
         <PaginationWrapper>
-          <PageButton>&lt;</PageButton>
-          <PageNumber className="active">1</PageNumber>
-          <PageNumber>2</PageNumber>
-          <PageNumber>3</PageNumber>
-          <PageButton>&gt;</PageButton>
+          <PageButton onClick={() => setPage((p) => Math.max(p - 1, 1))}>
+            &lt;
+          </PageButton>
+
+          {getPageNumbers().map((p) => (
+            <PageNumber
+              key={p}
+              className={p === page ? "active" : ""}
+              onClick={() => setPage(p)}
+            >
+              {p}
+            </PageNumber>
+          ))}
+
+          <PageButton onClick={() => setPage((p) => p + 1)}>&gt;</PageButton>
         </PaginationWrapper>
       </ContentSection>
     </Wrapper>
@@ -141,7 +121,6 @@ const TitleRow = styled.div`
 `;
 
 const TitleCell = styled.div`
-  flex: 1;
   text-align: left;
 `;
 
@@ -161,7 +140,6 @@ const BudgetItem = styled.div`
 `;
 
 const Cell = styled.div<{ hideOnMobile?: boolean }>`
-  flex: 1;
   text-align: left;
 
   ${({ hideOnMobile }) =>

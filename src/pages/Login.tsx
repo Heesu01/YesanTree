@@ -1,13 +1,30 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
+import { login } from "../api/UserApi";
 import logoImg from "../assets/logo.png";
 
-const LoginPage = () => {
+const Login = () => {
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert("로그인 시도!");
+
+    try {
+      await login({ email, password });
+      localStorage.setItem("isLoggedIn", "true");
+      navigate("/");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        alert(err.response?.data?.message || "로그인에 실패했습니다.");
+      } else {
+        alert("예상치 못한 에러가 발생했습니다.");
+      }
+    }
   };
 
   return (
@@ -17,8 +34,20 @@ const LoginPage = () => {
       <LoginBox>
         <Title>로그인</Title>
         <Form onSubmit={handleSubmit}>
-          <Input type="text" placeholder="아이디" required />
-          <Input type="password" placeholder="비밀번호" required />
+          <Input
+            type="text"
+            placeholder="이메일 아이디"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <Input
+            type="password"
+            placeholder="비밀번호"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
           <SubmitButton type="submit">로그인</SubmitButton>
           <SignupLink onClick={() => navigate("/signup")}>
             회원가입하러 가기 →
@@ -29,7 +58,7 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default Login;
 
 const Wrapper = styled.div`
   min-height: 100vh;
