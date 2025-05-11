@@ -57,3 +57,23 @@ export const fetchTop5ByField = async (): Promise<FieldTop5BudgetItem[]> => {
   const response = await Axios.get("/api/budget-by-field/top5");
   return response.data;
 };
+
+// 검색 - 행정 예산
+export const searchAdminBudget = async (
+  keyword: string
+): Promise<SimpleBudgetItem[]> => {
+  const response = await Axios.get(
+    `/api/budget/search/admin?keyword=${keyword}`
+  );
+  return response.data;
+};
+
+// 검색 - 시민 예산
+export const searchCitizenBudget = async (
+  keyword: string
+): Promise<CitizenBudgetItem[]> => {
+  const response = await Axios.get(
+    `/api/budget/search/citizen?keyword=${keyword}`
+  );
+  return response.data.data;
+};

@@ -11,12 +11,20 @@ const BudgetTab = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleSearch = () => {
-    console.log("검색:", searchValue);
-  };
-
   const isAdmin = location.pathname.includes("/budget/admin");
   const isCitizen = location.pathname.includes("/budget/citizen");
+
+  const handleSearch = () => {
+    if (!searchValue.trim()) return;
+
+    const query = encodeURIComponent(searchValue.trim());
+
+    if (isAdmin) {
+      navigate(`/budget/admin?keyword=${query}`);
+    } else if (isCitizen) {
+      navigate(`/budget/citizen?keyword=${query}`);
+    }
+  };
 
   return (
     <SectionWrapper>
@@ -26,7 +34,7 @@ const BudgetTab = () => {
           type="text"
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
-          placeholder="찾고 싶은 예산 키워드를 입력해보세요."
+          placeholder="찾고 싶은 예산 사업명을 입력해보세요."
         />
         <SearchButton onClick={handleSearch}>
           <IconBox>
