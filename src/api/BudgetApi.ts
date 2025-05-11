@@ -65,7 +65,7 @@ export const searchAdminBudget = async (
   const response = await Axios.get(
     `/api/budget/search/admin?keyword=${keyword}`
   );
-  return response.data;
+  return response.data.data;
 };
 
 // 검색 - 시민 예산
