@@ -59,7 +59,7 @@ const Header = () => {
       localStorage.removeItem("isLoggedIn");
       setUserName(null);
       setShowDropdown(false);
-      navigate("/");
+      window.location.reload();
     } catch (err) {
       console.error("로그아웃 실패", err);
       alert("로그아웃 중 문제가 발생했습니다.");

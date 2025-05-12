@@ -1,4 +1,5 @@
 import { Axios } from "./Axios";
+import { getUserInfo } from "./UserApi";
 
 export interface Board {
   boardId: string;
@@ -48,21 +49,21 @@ export const fetchAllPosts = async (
   }
 };
 
-// 게시글 상세 조회 (accessToken 쿠키 기반 분기)
+// 게시글 상세 조회
 export const fetchBoardDetail = async (
   boardId: string
 ): Promise<BoardDetail> => {
   try {
-    const cookies = document.cookie.split("; ").reduce((acc, curr) => {
-      const [key, value] = curr.split("=");
-      acc[key] = value;
-      return acc;
-    }, {} as Record<string, string>);
+    let isLoggedIn = false;
 
-    const hasAccessToken = Boolean(cookies.accessToken);
-    const url = hasAccessToken
-      ? `/boards/${boardId}`
-      : `/boards/one/${boardId}`;
+    try {
+      await getUserInfo();
+      isLoggedIn = true;
+    } catch {
+      isLoggedIn = false;
+    }
+
+    const url = isLoggedIn ? `/boards/${boardId}` : `/boards/one/${boardId}`;
 
     const response = await Axios.get(url);
     return response.data.data;
@@ -136,7 +137,7 @@ export const fetchTop3Posts = async (): Promise<Board[]> => {
 // 댓글 조회
 export const fetchComments = async (boardId: string): Promise<Comment[]> => {
   try {
-    const response = await Axios.get(`/comments/${boardId}`);
+    const response = await Axios.get(`/comments/get/${boardId}`);
     return response.data.data.commentList;
   } catch (error) {
     console.error("댓글 조회 실패:", error);
