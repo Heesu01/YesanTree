@@ -54,18 +54,7 @@ export const fetchBoardDetail = async (
   boardId: string
 ): Promise<BoardDetail> => {
   try {
-    let isLoggedIn = false;
-
-    try {
-      await getUserInfo();
-      isLoggedIn = true;
-    } catch {
-      isLoggedIn = false;
-    }
-
-    const url = isLoggedIn ? `/boards/${boardId}` : `/boards/one/${boardId}`;
-
-    const response = await Axios.get(url);
+    const response = await Axios.get(`/boards/${boardId}`);
     return response.data.data;
   } catch (error) {
     console.error("게시글 상세 조회 오류:", error);
