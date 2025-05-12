@@ -1,5 +1,4 @@
 import { Axios } from "./Axios";
-import { getUserInfo } from "./UserApi";
 
 export interface Board {
   boardId: string;
