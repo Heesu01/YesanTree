@@ -1,54 +1,95 @@
-# React + TypeScript + Vite
+# 예산트리
+>  
+> **2025 서울 열린데이터광장 공공데이터 활용 창업 경진대회 출품작**  
+> *공공 예산의 흐름을 시민의 손으로 투명하게 시각화하고, 지역 발전에 직접 참여할 수 있는 플랫폼*
+<br/>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 프로젝트 개요
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+예산트리는 서울시 공공 예산 정보를 시각화·필터링하여 누구나 쉽게 예산 집행 흐름을 이해하고, 직접 의견을 제안·투표할 수 있는 참여형 예산 플랫폼입니다.  
+시민은 단순히 정보를 열람하는 것을 넘어서, 스스로 지역 개선 아이디어를 제안하고 공감 투표를 통해 예산 제안 생태계에 기여할 수 있습니다.
 
-## Expanding the ESLint configuration
+<br/>
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 주요 역할
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+- **서비스 기획 및 UX 설계**
+  - 공공데이터 분석 및 시나리오 기반 사용자 흐름 구성
+  - 시민참여 중심의 기능 기획(제안, 투표, 커뮤니티 등)
+  - Figma를 활용한 UI 디자인 및 와이어프레임 제작
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- **프론트엔드 개발 전담**
+  - React.ts 기반 전체 페이지 UI 개발 및 컴포넌트 설계
+  - Styled-components 활용한 반응형 레이아웃 구성
+  - Axios를 이용한 공공데이터 연동 및 예산 데이터 시각화 구현
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+- **데이터 구조 설계 및 통합 테스트**
+  - 서울시 열린데이터 API를 분석하여 예산 정보 가공
+  - 연도, 분야, 예산유형 필터링 로직 구현
+  - 사용자 로그인 및 커뮤니티 기능 통합 검증
+
+<br/>
+
+## ⚙️ 주요 기능
+
+### 1. 예산 유형별 분류 기능
+- 서울시 예산을 **행정예산 / 시민참여예산**으로 구분
+
+### 2. 카테고리별 예산 필터링
+- **국비, 시비, 도비** 등 재원 출처 기반 필터링 제공
+
+### 3. 분야별 예산 시각화
+- 복지, 환경, 문화 등 주요 분야 예산을 그래프로 시각화
+
+### 4. 커뮤니티 제안 및 투표 기능
+- 예산 사업에 대한 제안 등록 및 **좋아요/싫어요** 투표 가능
+
+### 5. 로그인 기능
+- 소셜 로그인 기반 사용자 인증 도입
+
+<br/>
+
+## 기대 효과
+
+| 효과 | 내용 |
+|------|------|
+| 시민 이해도 상승 | 복잡한 예산을 시각화하여 정책 접근성 향상 |
+| 행정 신뢰도 증가 | 예산 흐름을 시민이 직접 확인하고 참여함으로써 투명성 강화 |
+| 실질적 참여 유도 | 시민 제안과 투표 기능으로 행정 피드백 루트 구축 |
+
+<br/>
+
+## 활용 데이터 (서울 열린데이터광장)
+
+| 구분 | 세출운용 예산 | 시민참여예산 |
+|------|---------------|----------------|
+| 주체 | 서울시 | 시민 |
+| 범위 | 전체 사업 | 시민 제안 사업 |
+| 목적 | 예산 흐름 파악 | 정책 참여 및 사례 학습 |
+| 활용 포인트 | 데이터 시각화, 분야 비교 | 제안 유도, 성공 사례 공개 |
+
+- 서울시 **세출운용 사업 및 예산 정보**
+- 서울시 **시민참여예산사업 예산집행 정보**
+
+<br/>
+
+## 결과물 미리보기
+
+### 홈
+![홈2](https://github.com/user-attachments/assets/f9f6ca75-2148-4338-9b33-b4fd77e804d7)
+![홈1](https://github.com/user-attachments/assets/d69d8ebd-ee8a-4093-9fde-8a23836f3d2d)  <img width="1000" alt="image" src="https://github.com/user-attachments/assets/462970d7-fcf7-4378-a85a-8470ab59f074" />
+
+### 로그인/회원가입
+![로그인](https://github.com/user-attachments/assets/f2b15123-ccae-4506-ab50-7d8a498db301)
+
+### 서울시 행정 예산
+![행정예산](https://github.com/user-attachments/assets/e9c3372e-42d2-4b9e-bc4c-ebc299371d22)
+
+### 시민 참여 예산
+![시민참여](https://github.com/user-attachments/assets/d015854d-d8b8-4e34-a314-d2c37ca83a22)
+
+### 커뮤니티
+![커뮤니티](https://github.com/user-attachments/assets/889d4f6b-98fc-423e-9727-365c032dc943)
+
