@@ -42,6 +42,7 @@
 
 ### 5. 로그인/회원가입 기능
 - 로그인 기반 사용자 인증 도입
+- 로그인 상태에 따라 커뮤니티 기능 접근 제어 및 조건부 렌더링 처리
 
 <br/>
 
@@ -93,6 +94,7 @@
 - 커뮤니티
 <img width="1455" alt="커뮤니티" src="https://github.com/user-attachments/assets/e52f70e6-22a6-4116-a799-2b79715a2786" />
 <img width="1470" alt="게시글" src="https://github.com/user-attachments/assets/f181c3e5-02cb-4ca2-9683-ad72caad8abe" />
+<img width="1470" alt="글쓰기" src="https://github.com/user-attachments/assets/05067175-a451-46c1-b303-dd7e27bc2153" />
 
 
 - 모바일반응형
