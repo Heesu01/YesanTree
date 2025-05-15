@@ -71,29 +71,29 @@
 
 ## 결과물
 
-### 홈
+- 홈
 <img width="1470" alt="홈1" src="https://github.com/user-attachments/assets/c33d6f4b-0baa-40b7-936f-e6912e527bc9" />
 <img width="1469" alt="홈2" src="https://github.com/user-attachments/assets/e3fe9dfe-1f7b-42d5-a8fa-a1734c6d3d97" />
 <img width="1470" alt="홈3" src="https://github.com/user-attachments/assets/6465f7e0-7c85-42ef-9194-92f9f2d7372d" />
 
 
-### 로그인/회원가입
+- 로그인/회원가입
 <img width="1470" alt="로그인" src="https://github.com/user-attachments/assets/0d300eb1-1c5b-495c-b8de-65f2f58eee3f" />
 <img width="1470" alt="회원가입" src="https://github.com/user-attachments/assets/9bc6c11e-adae-4b0c-870e-354b69cce069" />
 
-### 서울시 행정 예산
+- 서울시 행정 예산
 <img width="1470" alt="행정예산" src="https://github.com/user-attachments/assets/2aad227b-f510-4697-86ad-e7e7001e8cfd" />
 <img width="1470" alt="행정예산2" src="https://github.com/user-attachments/assets/65162df6-bf1b-462d-8a73-e75e950601bb" />
 
 
-### 시민 참여 예산
+- 시민 참여 예산
 <img width="1470" alt="시민참여예산" src="https://github.com/user-attachments/assets/ad7e744c-7506-4fb9-984b-7ed23ae85043" />
 
 
-### 커뮤니티
+- 커뮤니티
 <img width="1455" alt="커뮤니티" src="https://github.com/user-attachments/assets/e52f70e6-22a6-4116-a799-2b79715a2786" />
 <img width="1470" alt="게시글" src="https://github.com/user-attachments/assets/f181c3e5-02cb-4ca2-9683-ad72caad8abe" />
 
 
-### 모바일반응형
+- 모바일반응형
 ![모바일반응형](https://github.com/user-attachments/assets/a3d712fa-56c8-4646-955c-aae7ecb1e46d)
