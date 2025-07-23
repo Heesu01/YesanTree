@@ -5,7 +5,7 @@
 <br/>
 
 ## 프로젝트 개요
-![깃대표2](https://github.com/user-attachments/assets/d6245a4e-f277-46cd-915d-c9299ba6747f)
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/e2238112-a060-4ebd-ae8a-e7a690e9de61" />
 
 
 예산트리는 서울시 공공 예산 정보를 시각화·필터링하여 누구나 쉽게 예산 집행 흐름을 이해하고, 직접 의견을 제안·투표할 수 있는 참여형 예산 플랫폼입니다. 시민은 단순히 정보를 열람하는 것을 넘어서, 스스로 지역 개선 아이디어를 제안하고 공감 투표를 통해 예산 제안 생태계에 기여할 수 있습니다.
@@ -98,4 +98,4 @@
 
 
 - 모바일반응형
-![모바일반응형](https://github.com/user-attachments/assets/a3d712fa-56c8-4646-955c-aae7ecb1e46d)
+<img width="2044" height="999" alt="모바일반응형" src="https://github.com/user-attachments/assets/bbd0f622-1547-489b-bcbd-c4ce98509bc0" />
